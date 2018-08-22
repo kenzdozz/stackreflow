@@ -12,4 +12,15 @@ const code = {
   conflict: 409,
 };
 
-export { jwtSecret, code };
+const errMsg = {
+    serverError: 'Internal server error',
+    unAuthorized: 'You are not authorized',
+    notFound: {
+        users: 'There are no users found',
+        user: 'This user cannot be found',
+        questions: 'There are no questions found',
+        question: 'This question cannot be found',
+    },
+}
+
+export { jwtSecret, code, errMsg };

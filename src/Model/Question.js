@@ -109,7 +109,7 @@ class Question {
       return client.query(getQuery, (err, res) => {
         done();
         if (err) return callback({ status: false, messages: err.stack });
-        return callback({ status: true, data: res.rows });
+        return callback({ status: true, questions: res.rows });
       });
     });
   }
@@ -125,7 +125,7 @@ class Question {
       return client.query(getQuery, (err, res) => {
         done();
         if (err) return callback({ status: false, messages: err.stack });
-        return callback({ status: true, data: res.rows });
+        return callback({ status: true, questions: res.rows });
       });
     });
   }
