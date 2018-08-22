@@ -1,4 +1,5 @@
 import User from '../Model/User';
+import { code } from '../config';
 
 function validate(user) {
   const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -31,11 +32,13 @@ function createUser(req, res) {
 
   const valid = validate(user);
 
-  if (!valid.status) {
-    return res.json(valid);
-  }
+  if (!valid.status) return res.status(code.badRequest).json(valid);
 
-  return user.save(data => res.json(data));
+  return user.save((data) => {
+    if (!data.status) return res.status(code.serverError).json('Internal server error');
+    if (data.message === 'duplicate') return res.status(code.conflict).json('User already exists');
+    return res.status(code.ok).json(data);
+  });
 }
 
 function registerRoutes(router) {

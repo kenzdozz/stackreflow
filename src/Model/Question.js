@@ -45,7 +45,6 @@ class Question {
     pool.connect((error, client, done) => {
       if (error) return callback({ status: false, message: error.stack });
       return client.query(getQuery, (err, res) => {
-        console.log(err)
         done();
         if (err) return callback({ status: false, messages: err.stack });
         return callback({ status: true, question: res.rows[0] });
@@ -61,7 +60,7 @@ class Question {
 
     pool.connect((error, client, done) => {
       if (error) return callback({ status: false, message: error.stack });
-      return client.query(insertQuery, (err, res) => {
+      return client.query(insertQuery, (err) => {
         done();
         if (err) return callback({ status: false, messages: err.stack });
         return Question.find(0, callback);
