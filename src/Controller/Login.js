@@ -1,6 +1,6 @@
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
-import { jwtSecret } from '../config';
+import { jwtSecret, code } from '../config';
 import User from '../Model/User';
 
 function validate(user) {
@@ -31,19 +31,19 @@ function login(req, res) {
   const valid = validate(user);
 
   if (!valid.status) {
-    return res.json(valid);
+    return res.status(code.badRequest).json(valid);
   }
 
   return User.find(user.email, (data) => {
-    if (!data.status) return res.status(500).json('Internal server error');
+    if (!data.status) return res.status(code.serverError).json('Internal server error');
     if (data.user && data.user.password && bcrypt.compareSync(user.password, data.user.password)) {
       const token = jwt.sign({
         email: data.user.email,
         id: data.user.id,
       }, jwtSecret);
-      return res.status(200).json(token);
+      return res.status(code.ok).json({ token });
     }
-    return res.status(403).json('Invalid email or password.');
+    return res.status(code.badRequest).json('Invalid email or password.');
   });
 }
 

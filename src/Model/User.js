@@ -59,7 +59,7 @@ class User {
       if (error) return callback({ status: false, message: error.stack });
       return client.query(insertQuery, (err) => {
         done();
-        const msg = err.constraint === 'users_email_key' ? 'User already exists' : 'An error has been encountered';
+        const msg = err.constraint === 'users_email_key' ? 'duplicate' : err.stack;
         if (err) return callback({ status: false, messages: msg });
         return User.find(this[user].email, callback);
       });
@@ -109,7 +109,7 @@ class User {
       return client.query(getQuery, (err, res) => {
         done();
         if (err) return callback({ status: false, messages: err.stack });
-        return callback({ status: true, data: res.rows });
+        return callback({ status: true, users: res.rows });
       });
     });
   }

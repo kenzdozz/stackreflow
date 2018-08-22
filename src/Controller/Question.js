@@ -1,4 +1,5 @@
 import Question from '../Model/Question';
+import { code } from '../config';
 
 function validate(req) {
   const msg = [];
@@ -19,21 +20,24 @@ function validate(req) {
 }
 
 function postQuestion(req, res) {
-    const valid = validate(req);
+  const valid = validate(req);
 
-    if (!valid.status) {
-      return res.json(valid);
-    }
-  const user = res.locals.user;
-  
-    const question = new Question();
-    question.title = req.body.title.trim();
-    question.body = req.body.body.trim();
-    if (req.body.tags) question.tags = req.body.tags.trim();
-    question.userId = user.id;
-
-    return question.save(data => res.json(data));
+  if (!valid.status) {
+    return res.status(code.badRequest).json(valid);
   }
+
+  const question = new Question();
+  question.title = req.body.title.trim();
+  question.body = req.body.body.trim();
+  if (req.body.tags) question.tags = req.body.tags.trim();
+  question.userId = res.locals.user.id;
+
+  return question.save(data => res.status(code.ok).json(data));
+}
+
+// function getQuestions(req, res) {
+
+// }
 
 function questionRoutes(router) {
   router.post('/questions', postQuestion);
