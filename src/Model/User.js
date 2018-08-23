@@ -69,25 +69,25 @@ class User {
   static update(id, aUser, callback) {
     let i = 0;
     const values = [];
-    let set; let
-      password = '';
+    let set = '';
+    let password = '';
     if (aUser.name) {
-      set = `name = ${i += 1}`;
+      set = `name = $${i += 1}`;
       values.push(aUser.name);
     }
     if (aUser.email) {
-      set = `email = ${i += 1}`;
+      set = `email = $${i += 1}`;
       values.push(aUser.email);
     }
     if (aUser.password) {
       password = bcrypt.hashSync(aUser.password, 10);
-      set = `password = ${i += 1}`;
+      set = `password = $${i += 1}`;
       values.push(password);
     }
     values.push(id);
 
     const updateQuery = {
-      text: `UPDATE users SET ${set} WHERE id = $${i}`,
+      text: `UPDATE users SET ${set} WHERE id = $${i += 1}`,
       values,
     };
 
