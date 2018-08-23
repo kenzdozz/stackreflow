@@ -71,23 +71,23 @@ class Question {
   static update(id, aQuestion, callback) {
     let i = 0;
     const values = [];
-    let set;
+    let set = '';
     if (aQuestion.title) {
-      set += `title = ${i += 1} `;
+      set += `title = $${i += 1} `;
       values.push(aQuestion.title);
     }
     if (aQuestion.body) {
-      set += `body = ${i += 1} `;
+      set += `body = $${i += 1} `;
       values.push(aQuestion.body);
     }
     if (aQuestion.tags) {
-      set += `tags = ${i += 1} `;
+      set += `tags = $${i += 1} `;
       values.push(aQuestion.tags);
     }
     values.push(id);
 
     const updateQuery = {
-      text: `UPDATE questions SET ${set} WHERE id = $${id}`,
+      text: `UPDATE questions SET ${set} WHERE id = $${i += 1}`,
       values,
     };
 
