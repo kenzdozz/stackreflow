@@ -59,8 +59,10 @@ class User {
       if (error) return callback({ status: false, message: error.stack });
       return client.query(insertQuery, (err) => {
         done();
-        const msg = err.constraint === 'users_email_key' ? 'duplicate' : err.stack;
-        if (err) return callback({ status: false, messages: msg });
+        if (err) {
+          const msg = err.constraint === 'users_email_key' ? 'duplicate' : err.stack;
+          return callback({ status: true, message: msg });
+        }
         return User.find(this[user].email, callback);
       });
     });
@@ -110,6 +112,24 @@ class User {
         done();
         if (err) return callback({ status: false, messages: err.stack });
         return callback({ status: true, users: res.rows });
+      });
+    });
+  }
+
+  static delete(id, callback) {
+    const isEmail = Number.isNaN(parseInt(id, 10));
+    const where = isEmail ? 'LOWER(email) = LOWER($1)' : 'id = $1';
+    const getQuery = {
+      text: `DELETE FROM users WHERE ${where}`,
+      values: [`${id}`],
+    };
+
+    pool.connect((error, client, done) => {
+      if (error) return callback({ status: false, message: error.stack });
+      return client.query(getQuery, (err, res) => {
+        done();
+        if (err) return callback({ status: false, messages: err.stack });
+        return callback({ status: true, user: res.rows[0] });
       });
     });
   }

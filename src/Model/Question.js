@@ -141,7 +141,18 @@ class Question {
       return client.query(getQuery, (err) => {
         done();
         if (err) return callback({ status: false, messages: err.stack });
-        return callback({ status: true, data: {} });
+        return callback({ status: true, question: {} });
+      });
+    });
+  }
+
+  static empty(callback) {
+    const emptyQuery = 'DELETE FROM questions';
+    pool.connect((error, client, done) => {
+      if (error) return callback(error);
+      return client.query(emptyQuery, (err) => {
+        done();
+        return callback(err);
       });
     });
   }
