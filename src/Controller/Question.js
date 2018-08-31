@@ -3,21 +3,18 @@ import { code, errMsg } from '../config';
 import Answer from '../Model/Answer';
 
 function validate(req) {
-  const msg = [];
+  let msg = {};
   let status = true;
 
   if (!req.body.title || req.body.title === '') {
-    msg.push('Question title is required.');
+    msg.title = 'Question title is required. ';
     status = false;
   }
   if (!req.body.body || req.body.body === '') {
-    msg.push('Question body is required.');
+    msg.body = 'Question body is required.';
     status = false;
   }
-  return {
-    status,
-    message: JSON.stringify(msg),
-  };
+  return { status, errors: msg };
 }
 
 function postQuestion(req, res) {
@@ -32,15 +29,19 @@ function postQuestion(req, res) {
   question.userId = res.locals.user.id;
 
   return question.save((data) => {
-    if (!data.status) return res.status(code.serverError).json(errMsg.serverError);
+    if (!data.status) {
+      return res.status(code.serverError).json({ status: false, errors: errMsg.serverError });
+    }
     return res.status(code.ok).json(data);
   });
 }
 
 function getQuestion(req, res) {
   return Question.find(req.params.questionId, (data) => {
-    if (!data.status) return res.status(code.serverError).json(errMsg.serverError);
-    if (!data.question) return res.status(code.notFound).json(errMsg.notFound.question);
+    if (!data.status) {
+      return res.status(code.serverError).json({ status: false, errors: errMsg.serverError });
+    }
+    if (!data.question) return res.status(code.ok).json({ status: true, question: {} });
     return Answer.findForQuestion(data.question.id, (data2) => {
       if (!data2.status) return res.status(code.serverError).json(errMsg.serverError);
       const responseData = {
@@ -56,20 +57,26 @@ function getQuestion(req, res) {
 function getQuestions(req, res) {
   return Question.findAll((data) => {
     if (!data.status) return res.status(code.serverError).json(errMsg.serverError);
-    if (data.questions.length < 1) return res.status(code.notFound).json(errMsg.notFound.questions);
+    data.authCheck = res.locals.authCheck;
     return res.status(code.ok).json(data);
   });
 }
 
 function deleteQuestion(req, res) {
   return Question.find(req.params.questionId, (data) => {
-    if (!data.status) return res.status(code.serverError).json(errMsg.serverError);
-    if (!data.question) return res.status(code.notFound).json(errMsg.notFound.question);
-    if (data.question.userId !== res.locals.user.id) {
-      return res.status(code.unAuthorized).json(errMsg.unAuthorized);
+    if (!data.status) {
+      return res.status(code.serverError).json({ status: false, errors: errMsg.serverError });
+    }
+    if (!data.question) {
+      return res.status(code.ok).json({ status: false, errors: errMsg.notFound.question });
+    }
+    if (data.question.user_id !== res.locals.user.id) {
+      return res.status(code.unAuthorized).json({ status: false, errors: errMsg.unAuthorized });
     }
     return Question.delete(req.params.questionId, (data2) => {
-      if (!data2.status) return res.status(code.serverError).json(errMsg.serverError);
+      if (!data2.status) {
+        return res.status(code.serverError).json({ status: false, errors: errMsg.serverError });
+      }
       return res.status(code.ok).json(data2);
     });
   });

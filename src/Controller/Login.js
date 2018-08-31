@@ -1,24 +1,24 @@
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
-import { jwtSecret, code } from '../config';
+import { jwtSecret, code, errMsg } from '../config';
 import User from '../Model/User';
 
 function validate(user) {
   const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  const msg = [];
+  const msg = {};
   let status = true;
 
   if (!regex.test(user.email)) {
-    msg.push('A valid email address is required.');
+    msg.email = 'A valid email address is required.';
     status = false;
   }
   if (user.password === '') {
-    msg.push('Password is required.');
+    msg.password = 'Password is required.';
     status = false;
   }
   return {
     status,
-    message: JSON.stringify(msg),
+    errors: msg,
   };
 }
 
@@ -35,15 +35,19 @@ function login(req, res) {
   }
 
   return User.find(user.email, (data) => {
-    if (!data.status) return res.status(code.serverError).json('Internal server error');
+    if (!data.status) {
+      return res.status(code.serverError).json({ status: false, errors: errMsg.serverError });
+    }
     if (data.user && data.user.password && bcrypt.compareSync(user.password, data.user.password)) {
       const token = jwt.sign({
         email: data.user.email,
         id: data.user.id,
       }, jwtSecret);
-      return res.status(code.ok).json({ token });
+      const aUser = data.user;
+      delete aUser.password;
+      return res.status(code.ok).json({ status: true, token, user: aUser });
     }
-    return res.status(code.badRequest).json('Invalid email or password.');
+    return res.status(code.badRequest).json({ status: false, errors: { email: 'Invalid email or password.' } });
   });
 }
 

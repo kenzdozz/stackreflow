@@ -1,42 +1,45 @@
 import User from '../Model/User';
-import { code } from '../config';
+import { code, errMsg } from '../config';
 
-function validate(user) {
+function validate(req) {
   const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  const msg = [];
+  const msg = {};
   let status = true;
 
-  if (!regex.test(user.email)) {
-    msg.push('A valid email address is required.');
+  if (!regex.test(req.body.email.trim())) {
+    msg.email = 'A valid email address is required.';
     status = false;
   }
-  if (user.name === '') {
-    msg.push('Display name is required.');
+  if (req.body.name.trim() === '') {
+    msg.name = 'Display name is required.';
     status = false;
   }
-  if (user.password === '') {
-    msg.push('Password is required.');
+  if (req.body.password === '') {
+    msg.password = 'Password is required.';
     status = false;
   }
   return {
     status,
-    message: JSON.stringify(msg),
+    errors: msg,
   };
 }
 
 function createUser(req, res) {
+  const valid = validate(req);
+  if (!valid.status) return res.status(code.badRequest).json(valid);
+
   const user = new User();
   user.name = req.body.name.trim();
   user.email = req.body.email.trim();
   user.password = req.body.password;
 
-  const valid = validate(user);
-
-  if (!valid.status) return res.status(code.badRequest).json(valid);
-
   return user.save((data) => {
-    if (!data.status) return res.status(code.serverError).json('Internal server error');
-    if (data.message === 'duplicate') return res.status(code.conflict).json('User already exists');
+    if (!data.status) {
+      return res.status(code.serverError).json({ status: false, errors: errMsg.serverError });
+    }
+    if (data.message === 'duplicate') {
+      return res.status(code.conflict).json({ status: false, errors: { email: 'User already exists' } });
+    }
     return res.status(code.ok).json(data);
   });
 }
