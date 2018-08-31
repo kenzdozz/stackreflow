@@ -11,6 +11,9 @@ chai.use(chaiHttp);
 
 
 describe('Answer', () => {
+
+  Answer.createTable(data => {});
+  
   beforeEach((done) => {
     Answer.empty((err) => {
       if (err) throw err;

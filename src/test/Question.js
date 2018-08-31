@@ -9,6 +9,7 @@ import Question from '../Model/Question';
 const expect = chai.expect;
 chai.use(chaiHttp);
 
+Question.createTable(data => {});
 
 describe('Question', () => {
   beforeEach((done) => {

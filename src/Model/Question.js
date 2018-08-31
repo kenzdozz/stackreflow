@@ -21,8 +21,9 @@ class Question {
           + ' body varchar(3000),'
           + ' tags varchar(255) NULL,'
           + ' answer_count integer DEFAULT 0,'
-          + ' createdAt date DEFAULT CURRENT_TIMESTAMP,'
-          + ' updatedAt date DEFAULT CURRENT_TIMESTAMP );';
+          + ' view_count integer DEFAULT 0,'
+          + ' created_at date DEFAULT CURRENT_TIMESTAMP,'
+          + ' updated_at date DEFAULT CURRENT_TIMESTAMP );';
 
     pool.connect((error, client, done) => {
       if (error) return callback({ status: false, message: error.stack });

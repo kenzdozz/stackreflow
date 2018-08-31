@@ -4,10 +4,12 @@
 import chai from 'chai';
 import chaiHttp from 'chai-http';
 import app from '../app';
+import User from '../Model/User';
 
 const expect = chai.expect;
 chai.use(chaiHttp);
 
+User.createTable(data => {});
 
 describe('Authentication', () => {
   describe('POST /auth/login', () => {
