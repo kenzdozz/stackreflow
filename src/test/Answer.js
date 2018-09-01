@@ -11,11 +11,6 @@ import User from '../Model/User';
 const expect = chai.expect;
 chai.use(chaiHttp);
 
-async function createTables(){
-  await Question.createTable(data => { });
-  await Answer.createTable(data => { });
-}
-createTables();
 
 describe('Answer', () => {
 
@@ -36,28 +31,30 @@ describe('Answer', () => {
 
   before(function (done) {
 
-    Answer.empty((err) => {
-      if (err) throw err;
-
-      Question.empty((err) => {
-        if (err) throw err;
-
-        User.empty((err) => {
+    Question.createTable(data => {
+      Answer.createTable(data => {
+        Answer.empty((err) => {
           if (err) throw err;
+          Question.empty((err) => {
+            if (err) throw err;
+            User.empty((err) => {
+              if (err) throw err;
 
-          newUser.save(data => {
-            user = data.user;
-            newQuestion.userId = user.id;
+              newUser.save(data => {
+                user = data.user;
+                newQuestion.userId = user.id;
 
-            newQuestion.save(data => {
-              question = data.question;
+                newQuestion.save(data => {
+                  question = data.question;
 
-              chai.request(app).post('/api/v1/auth/login')
-                .send({ email: 'kenzdozz@gmail.com', password: 'chidozie', })
-                .end((err, res) => {
-                  token = res.body.token;
-                  done();
+                  chai.request(app).post('/api/v1/auth/login')
+                    .send({ email: 'kenzdozz@gmail.com', password: 'chidozie', })
+                    .end((err, res) => {
+                      token = res.body.token;
+                      done();
+                    });
                 });
+              });
             });
           });
         });
