@@ -19,19 +19,19 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
 app.use('/api/v1/questions', (req, res, next) => {
-  // const token = req.body.token || req.query.token || req.headers['x-access-token'] || 'none';
-  // return jwt.verify(token, jwtSecret, (err, data) => {
-  //   if (err) {
-  //     if (req.method === 'GET'){
-  //       res.locals.authCheck = false;
-  //       return next();
-  //     }
-  //     return res.status(code.unAuthorized).json('Unauthorized Access - invalid or no token');
-  //   }
-    res.locals.user = {id : 1};
-  //   res.locals.authCheck = true;
+  const token = req.body.token || req.query.token || req.headers['x-access-token'] || 'none';
+  return jwt.verify(token, jwtSecret, (err, data) => {
+    if (err) {
+      if (req.method === 'GET'){
+        res.locals.authCheck = false;
+        return next();
+      }
+      return res.status(code.unAuthorized).json('Unauthorized Access - invalid or no token');
+    }
+    res.locals.user = data;
+    res.locals.authCheck = true;
     return next();
-  // });
+  });
 });
 
 app.use(express.static(`${__dirname}/public`));
