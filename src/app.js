@@ -28,7 +28,7 @@ app.use('/api/v1/questions', (req, res, next) => {
   //     }
   //     return res.status(code.unAuthorized).json('Unauthorized Access - invalid or no token');
   //   }
-  //   res.locals.user = data;
+    res.locals.user = {id : 1};
   //   res.locals.authCheck = true;
     return next();
   // });
