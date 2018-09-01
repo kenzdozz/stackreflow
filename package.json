@@ -4,7 +4,7 @@
   "description": "Andela VLF Assessment --- Stackoverflow lite",
   "main": "app.js",
   "scripts": {
-    "test": "babel src/ -d lib/ && mocha lib/test/",
+    "test": "babel src/ -d lib/ && mocha lib/test/ --exit",
     "build": "babel src -d lib",
     "start": "npm run build && node lib/app"
   },

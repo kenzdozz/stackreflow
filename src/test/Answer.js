@@ -11,8 +11,11 @@ import User from '../Model/User';
 const expect = chai.expect;
 chai.use(chaiHttp);
 
-Question.createTable(data => { });
-Answer.createTable(data => { });
+async function createTables(){
+  await Question.createTable(data => { });
+  await Answer.createTable(data => { });
+}
+createTables();
 
 describe('Answer', () => {
 
