@@ -10,6 +10,9 @@ import User from '../Model/User';
 const expect = chai.expect;
 chai.use(chaiHttp);
 
+User.createTable(data => { });
+Question.createTable(data => { });
+
 describe('Question', () => {
 
   let newQuestion = new Question();
@@ -26,16 +29,8 @@ describe('Question', () => {
   let question = null;
   let token = null;
 
-  before(done => {
-    User.createTable(data => {
-      Question.createTable(data => {
-        done();
-      });
-    });
-  })
-
   beforeEach(function (done) {
-
+    
     Question.empty((err) => {
       if (err) throw err;
 
@@ -48,7 +43,7 @@ describe('Question', () => {
 
           newQuestion.save(data => {
             question = data.question;
-
+            
             chai.request(app).post('/api/v1/auth/login')
               .send({ email: 'kenzdozz@gmail.com', password: 'chidozie', })
               .end((err, res) => {

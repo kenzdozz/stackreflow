@@ -9,6 +9,8 @@ import User from '../Model/User';
 const expect = chai.expect;
 chai.use(chaiHttp);
 
+User.createTable(data => { });
+
 describe('Authentication', () => {
 
   let newUser = new User();
@@ -17,13 +19,12 @@ describe('Authentication', () => {
   newUser.password = 'chidozie';
 
   before(function (done) {
-    User.createTable(data => {
-      User.empty((err) => {
-        if (err) throw err;
 
-        newUser.save(data => {
-          done();
-        });
+    User.empty((err) => {
+      if (err) throw err;
+
+      newUser.save(data => {
+        done();
       });
     });
   });
