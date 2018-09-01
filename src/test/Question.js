@@ -5,20 +5,54 @@ import chai from 'chai';
 import chaiHttp from 'chai-http';
 import app from '../app';
 import Question from '../Model/Question';
-import Answer from '../Model/Answer';
+import User from '../Model/User';
 
 const expect = chai.expect;
 chai.use(chaiHttp);
 
-Answer.createTable(data => {});
-Question.createTable(data => {});
+User.createTable(data => { });
+Question.createTable(data => { });
 
 describe('Question', () => {
-  
-  beforeEach((done) => {
+
+  let newQuestion = new Question();
+  newQuestion.title = 'How can I test this test?';
+  newQuestion.body = 'How will I write a test code to test my test codes on nodejs?';
+  newQuestion.tags = 'test, test code';
+
+  let newUser = new User();
+  newUser.name = 'Kenneth';
+  newUser.email = 'kenzdozz@gmail.com';
+  newUser.password = 'chidozie';
+
+  let user = null;
+  let question = null;
+  let token = null;
+
+  beforeEach(function (done) {
+    
     Question.empty((err) => {
       if (err) throw err;
-      done();
+
+      User.empty((err) => {
+        if (err) throw err;
+
+        newUser.save(data => {
+          user = data.user;
+          newQuestion.userId = user.id;
+
+          newQuestion.save(data => {
+            question = data.question;
+            
+            chai.request(app).post('/api/v1/auth/login')
+              .send({ email: 'kenzdozz@gmail.com', password: 'chidozie', })
+              .end((err, res) => {
+                token = res.body.token;
+                done();
+              });
+          });
+        });
+      });
     });
   });
 
@@ -28,7 +62,7 @@ describe('Question', () => {
         .end((err, res) => {
           expect(res.statusCode, 'Should be 200').to.equal(200);
           expect(res.body.questions, 'Should return array').to.be.a('array');
-          expect(res.body.questions.length, 'Should return no questions').to.be.equal(0);
+          expect(res.body.questions.length, 'Should return one question').to.be.equal(1);
           done();
         });
     });
@@ -39,64 +73,46 @@ describe('Question', () => {
       const question = {
         body: 'How will I write a test code to test my test codes on nodejs?',
         tags: 'test, test code',
+        user_id: user.id,
+        token: token,
       };
-      const user = {
-        email: 'kenzdozz@gmail.com',
-        password: 'chidozie',
-      };
-      chai.request(app).post('/api/v1/auth/login').send(user)
-        .end((error, response) => {
-          question.token = response.body.token;
-          chai.request(app).post('/api/v1/questions').send(question)
-            .end((err, res) => {
-              expect(res.statusCode, 'Should be 400').to.equal(400);
-              expect(res.body, 'Should return object').to.be.a('object');
-              expect(res.body.errors.title, 'Should require title').to.eql('Question title is required. ');
-              done();
-            });
+      chai.request(app).post('/api/v1/questions').send(question)
+        .end((err, res) => {
+          expect(res.statusCode, 'Should be 400').to.equal(400);
+          expect(res.body, 'Should return object').to.be.a('object');
+          expect(res.body.errors.title, 'Should require title').to.eql('Question title is required. ');
+          done();
         });
     });
 
     it('Should post a question', (done) => {
       const question = {
-        title: 'How can I test this test?',
+        title: 'How can I test another test?',
         body: 'How will I write a test code to test my test codes on nodejs?',
         tags: 'test, test code',
+        user_id: user.id,
+        token: token,
       };
-      const user = {
-        email: 'kenzdozz@gmail.com',
-        password: 'chidozie',
-      };
-      chai.request(app).post('/api/v1/auth/login').send(user)
-        .end((error, response) => {
-          question.token = response.body.token;
-          chai.request(app).post('/api/v1/questions').send(question)
-            .end((err, res) => {
-              expect(res.statusCode, 'Should be 200').to.equal(200);
-              expect(res.body.question, 'Should return object').to.be.a('object');
-              expect(res.body.question, 'Should have property id').to.have.property('id');
-              done();
-            });
+      chai.request(app).post('/api/v1/questions').send(question)
+        .end((err, res) => {
+          expect(res.statusCode, 'Should be 200').to.equal(200);
+          expect(res.body.question, 'Should return object').to.be.a('object');
+          expect(res.body.question, 'Should have property id').to.have.property('id');
+          done();
         });
     });
   });
 
   describe('GET /questions/:questionId', () => {
     it('Should get a question', (done) => {
-      const question = new Question();
-      question.title = 'How can I test this test?';
-      question.body = 'How will I write a test code to test my test codes on nodejs?';
-      question.tags = 'test, test code';
-      question.userId = 8;
-      question.save((data) => {
-        chai.request(app).get(`/api/v1/questions/${data.question.id}`)
-          .end((err, res) => {
-            expect(res.statusCode, 'Should be 200').to.equal(200);
-            expect(res.body.question, 'Should return object').to.be.a('object');
-            expect(res.body.question, 'Should have property title').to.have.property('title');
-            done();
-          });
-      });
+
+      chai.request(app).get(`/api/v1/questions/${question.id}`)
+        .end((err, res) => {
+          expect(res.statusCode, 'Should be 200').to.equal(200);
+          expect(res.body.question, 'Should return object').to.be.a('object');
+          expect(res.body.question, 'Should have property title').to.have.property('title');
+          done();
+        });
     });
     it('Should not get a question with id 2333', (done) => {
       chai.request(app).get('/api/v1/questions/2333')
@@ -111,27 +127,13 @@ describe('Question', () => {
 
   describe('DELETE /questions/:questionId', () => {
     it('Should delete a question', (done) => {
-      const user = {
-        email: 'kenzdozz@gmail.com',
-        password: 'chidozie',
-      };
-      chai.request(app).post('/api/v1/auth/login').send(user)
-        .end((error, response) => {
-          const question = new Question();
-          question.title = 'How can I test this test?';
-          question.body = 'How will I write a test code to test my test codes on nodejs?';
-          question.tags = 'test, test code';
-          question.userId = response.body.user.id;
-          question.save((data) => {
-            chai.request(app).delete(`/api/v1/questions/${data.question.id}`)
-              .send({ token: response.body.token })
-              .end((err, res) => {
-                expect(res.statusCode, 'Should be 200').to.equal(200);
-                expect(res.body.question, 'Should return object').to.be.a('object');
-                expect(res.body.question, 'Should not have property title').not.to.have.property('title');
-                done();
-              });
-          });
+      chai.request(app).delete(`/api/v1/questions/${question.id}`)
+        .send({ token: token })
+        .end((err, res) => {
+          expect(res.statusCode, 'Should be 200').to.equal(200);
+          expect(res.body.question, 'Should return object').to.be.a('object');
+          expect(res.body.question, 'Should not have property title').not.to.have.property('title');
+          done();
         });
     });
   });

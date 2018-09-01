@@ -9,30 +9,57 @@ import User from '../Model/User';
 const expect = chai.expect;
 chai.use(chaiHttp);
 
-User.createTable(data => {});
+User.createTable(data => { });
 
 describe('Users', () => {
+
+  let newUser = new User();
+  newUser.name = 'Kenneth';
+  newUser.email = 'kenzdozz@gmail.com';
+  newUser.password = 'chidozie';
+
+  let user = null;
+  let token = null;
+
+  before(function (done) {
+
+    User.empty((err) => {
+      if (err) throw err;
+
+      newUser.save(data => {
+        user = data.user;
+
+        chai.request(app).post('/api/v1/auth/login')
+          .send({ email: 'kenzdozz@gmail.com', password: 'chidozie', })
+          .end((err, res) => {
+            token = res.body.token;
+            done();
+          });
+      });
+    });
+  });
+
   describe('GET /users', () => {
     it('Should get all users', (done) => {
-      const user = {
-        email: 'kenzdozz@gmail.com',
-        password: 'chidozie',
-      };
-      chai.request(app).post('/api/v1/auth/login').send(user)
-        .end((error, response) => {
-          chai.request(app).get('/api/v1/users').send({ token: response.body.token })
-            .end((err, res) => {
-              expect(res.statusCode, 'Should be 200').to.equal(200);
-              expect(res.body, 'Should return object').to.be.a('object');
-              expect(res.body.users, 'Should return array').to.be.a('array');
 
-              chai.request(app).get(`/api/v1/users/${res.body.users[0].id}`).send({ token: response.body.token })
-                .end((errr, ress) => {
-                  expect(ress.statusCode, 'Should be 200').to.equal(200);
-                  expect(ress.body.user, 'Should return object').to.be.a('object');
-                  done();
-                });
-            });
+      chai.request(app).get('/api/v1/users').send({ token })
+        .end((err, res) => {
+          expect(res.statusCode, 'Should be 200').to.equal(200);
+          expect(res.body, 'Should return object').to.be.a('object');
+          expect(res.body.users, 'Should return array').to.be.a('array');
+          done();
+        });
+    });
+  });
+
+  describe('GET /users/:userId', () => {
+    it('Should get one user', (done) => {
+
+      chai.request(app).get(`/api/v1/users/${user.id}`).send({ token })
+        .end((errr, res) => {
+          expect(res.statusCode, 'Should be 200').to.equal(200);
+          expect(res.body.user, 'Should return object').to.be.a('object');
+          done();
         });
     });
   });

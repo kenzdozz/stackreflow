@@ -104,7 +104,7 @@ class User {
   }
 
   static findAll(callback) {
-    const getQuery = 'SELECT * FROM users ORDER BY createdAt';
+    const getQuery = 'SELECT * FROM users ORDER BY created_at';
 
     pool.connect((error, client, done) => {
       if (error) return callback({ status: false, message: error.stack });
@@ -130,6 +130,17 @@ class User {
         done();
         if (err) return callback({ status: false, messages: err.stack });
         return callback({ status: true, user: res.rows[0] });
+      });
+    });
+  }
+
+  static empty(callback) {
+    const emptyQuery = 'DELETE FROM users';
+    pool.connect((error, client, done) => {
+      if (error) return callback(error);
+      return client.query(emptyQuery, (err) => {
+        done();
+        return callback(err);
       });
     });
   }

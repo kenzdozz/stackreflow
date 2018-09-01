@@ -103,7 +103,7 @@ class Question {
   }
 
   static findAll(callback) {
-    const getQuery = 'SELECT * FROM questions ORDER BY createdAt';
+    const getQuery = 'SELECT * FROM questions ORDER BY created_at';
 
     pool.connect((error, client, done) => {
       if (error) return callback({ status: false, message: error.stack });

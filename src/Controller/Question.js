@@ -43,7 +43,7 @@ function getQuestion(req, res) {
     }
     if (!data.question) return res.status(code.ok).json({ status: true, question: {} });
     return Answer.findForQuestion(data.question.id, (data2) => {
-      if (!data2.status) return res.status(code.serverError).json(errMsg.serverError);
+      if (!data2.status) return res.status(code.serverError).json({ status: false, errors: errMsg.serverError });
       const responseData = {
         status: true,
         question: data.question,
@@ -56,7 +56,7 @@ function getQuestion(req, res) {
 
 function getQuestions(req, res) {
   return Question.findAll((data) => {
-    if (!data.status) return res.status(code.serverError).json(errMsg.serverError);
+    if (!data.status) return res.status(code.serverError).json({ status: false, errors: errMsg.serverError });
     data.authCheck = res.locals.authCheck;
     return res.status(code.ok).json(data);
   });

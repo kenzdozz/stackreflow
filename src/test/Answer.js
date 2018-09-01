@@ -6,56 +6,85 @@ import chaiHttp from 'chai-http';
 import app from '../app';
 import Question from '../Model/Question';
 import Answer from '../Model/Answer';
+import User from '../Model/User';
 
 const expect = chai.expect;
 chai.use(chaiHttp);
 
-Answer.createTable(data => {});
-Question.createTable(data => {});
+Answer.createTable(data => { });
+Question.createTable(data => { });
 
 describe('Answer', () => {
 
-  beforeEach((done) => {
-    Answer.empty((err) => {
+  let newQuestion = new Question();
+  newQuestion.title = 'How can I test this test?';
+  newQuestion.body = 'How will I write a test code to test my test codes on nodejs?';
+  newQuestion.tags = 'test, test code';
+
+  let newUser = new User();
+  newUser.name = 'Kenneth';
+  newUser.email = 'kenzdozz@gmail.com';
+  newUser.password = 'chidozie';
+
+  let user = null;
+  let question = null;
+  let token = null;
+  let answerId = null;
+
+  before(function (done) {
+
+    Question.empty((err) => {
       if (err) throw err;
-      done();
+
+      Answer.empty((err) => {
+        if (err) throw err;
+
+        User.empty((err) => {
+          if (err) throw err;
+
+          newUser.save(data => {
+            user = data.user;
+            newQuestion.userId = user.id;
+
+            newQuestion.save(data => {
+              question = data.question;
+
+              chai.request(app).post('/api/v1/auth/login')
+                .send({ email: 'kenzdozz@gmail.com', password: 'chidozie', })
+                .end((err, res) => {
+                  token = res.body.token;
+                  done();
+                });
+            });
+          });
+        });
+      });
     });
   });
 
   describe('POST /questions/:questionId/answers', () => {
     it('Should post answer to a question with id', (done) => {
-      const question = {
-        title: 'How can I test this test?',
-        body: 'How will I write a test code to test my test codes on nodejs?',
-        tags: 'test, test code',
-      };
       const answer = {
         body: 'By writing test code to test the test code.',
+        token: token,
       };
-      const user = {
-        email: 'kenzdozz@gmail.com',
-        password: 'chidozie',
-      };
-      chai.request(app).post('/api/v1/auth/login').send(user)
-        .end((error, response) => {
-          question.token = response.body.token;
+      chai.request(app).post(`/api/v1/questions/${question.id}/answers`).send(answer)
+        .end((err, res) => {
+          answerId = res.body.answer.id;
+          expect(res.statusCode, 'Should be 200').to.equal(200);
+          expect(res.body, 'Should return object').to.be.a('object');
+          done();
+        });
+    });
+  });
 
-          chai.request(app).post('/api/v1/questions').send(question)
-            .end((errr, ress) => {
-              answer.token = response.body.token;
-              const questionId = ress.body.question.id;
-              chai.request(app).post(`/api/v1/questions/${questionId}/answers`).send(answer)
-                .end((err, res) => {
-                  const answerId = res.body.answer.id;
-
-                  chai.request(app).put(`/api/v1/questions/${questionId}/answers/${answerId}`)
-                    .send({ token: response.body.token }).end((er, re) => {
-                      expect(re.statusCode, 'Should be 200').to.equal(200);
-                      expect(re.body, 'Should return object').to.be.a('object');
-                      done();
-                    });
-                });
-            });
+  describe('PUT /questions/:questionId/answers/:answerId', () => {
+    it('Should accept an answer to a question', (done) => {
+      chai.request(app).put(`/api/v1/questions/${question.id}/answers/${answerId}`)
+        .send({ token: token }).end((err, res) => {
+          expect(res.statusCode, 'Should be 200').to.equal(200);
+          expect(res.body, 'Should return object').to.be.a('object');
+          done();
         });
     });
   });
