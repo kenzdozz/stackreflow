@@ -15,6 +15,13 @@ Question.createTable(data => {});
 
 describe('Answer', () => {
 
+  beforeEach((done) => {
+    Answer.empty((err) => {
+      if (err) throw err;
+      done();
+    });
+  });
+
   describe('POST /questions/:questionId/answers', () => {
     it('Should post answer to a question with id', (done) => {
       const question = {

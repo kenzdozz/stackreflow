@@ -14,6 +14,7 @@ Answer.createTable(data => {});
 Question.createTable(data => {});
 
 describe('Question', () => {
+  
   beforeEach((done) => {
     Question.empty((err) => {
       if (err) throw err;
