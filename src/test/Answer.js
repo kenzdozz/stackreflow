@@ -11,8 +11,8 @@ import User from '../Model/User';
 const expect = chai.expect;
 chai.use(chaiHttp);
 
-Answer.createTable(data => { });
 Question.createTable(data => { });
+Answer.createTable(data => { });
 
 describe('Answer', () => {
 
@@ -33,10 +33,10 @@ describe('Answer', () => {
 
   before(function (done) {
 
-    Question.empty((err) => {
+    Answer.empty((err) => {
       if (err) throw err;
 
-      Answer.empty((err) => {
+      Question.empty((err) => {
         if (err) throw err;
 
         User.empty((err) => {

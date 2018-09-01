@@ -9,9 +9,26 @@ import User from '../Model/User';
 const expect = chai.expect;
 chai.use(chaiHttp);
 
-User.createTable(data => {});
+User.createTable(data => { });
 
 describe('Authentication', () => {
+
+  let newUser = new User();
+  newUser.name = 'Kenneth';
+  newUser.email = 'kenzdozz@gmail.com';
+  newUser.password = 'chidozie';
+
+  before(function (done) {
+
+    User.empty((err) => {
+      if (err) throw err;
+
+      newUser.save(data => {
+        done();
+      });
+    });
+  });
+
   describe('POST /auth/login', () => {
     it('Should send login and return token', (done) => {
       const user = {
