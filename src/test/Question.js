@@ -5,10 +5,12 @@ import chai from 'chai';
 import chaiHttp from 'chai-http';
 import app from '../app';
 import Question from '../Model/Question';
+import Answer from '../Model/Answer';
 
 const expect = chai.expect;
 chai.use(chaiHttp);
 
+Answer.createTable(data => {});
 Question.createTable(data => {});
 
 describe('Question', () => {
