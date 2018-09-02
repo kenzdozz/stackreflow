@@ -1,9 +1,9 @@
 import Question from '../Model/Question';
-import { code, errMsg } from '../config';
+import { code, errMsg, timeAgo } from '../config';
 import Answer from '../Model/Answer';
 
 function validate(req) {
-  let msg = {};
+  const msg = {};
   let status = true;
 
   if (!req.body.title || req.body.title === '') {
@@ -43,12 +43,26 @@ function getQuestion(req, res) {
     }
     if (!data.question) return res.status(code.ok).json({ status: true, question: {} });
     return Answer.findForQuestion(data.question.id, (data2) => {
-      if (!data2.status) return res.status(code.serverError).json({ status: false, errors: errMsg.serverError });
+      if (!data2.status) {
+        return res.status(code.serverError).json({ status: false, errors: errMsg.serverError });
+      }
+      const aQuestion = data.question;
+      aQuestion.created = timeAgo(aQuestion.created_at);
+      aQuestion.view_count = aQuestion.view_count + 1;
+      aQuestion.manage = aQuestion.user_id === res.locals.user.id;
+      const theAnswers = data2.answers;
+      let answer = null;
+      theAnswers.forEach((anAnswer) => {
+        answer = anAnswer;
+        answer.created = timeAgo(answer.created_at);
+        answer.manage = answer.user_id === res.locals.user.id;
+      });
       const responseData = {
         status: true,
-        question: data.question,
-        answers: data2.answers,
+        question: aQuestion,
+        answers: theAnswers,
       };
+      Question.update(aQuestion.id, { view_count: 1 }, () => {});
       return res.status(code.ok).json(responseData);
     });
   });
@@ -56,9 +70,18 @@ function getQuestion(req, res) {
 
 function getQuestions(req, res) {
   return Question.findAll((data) => {
-    if (!data.status) return res.status(code.serverError).json({ status: false, errors: errMsg.serverError });
-    data.authCheck = res.locals.authCheck;
-    return res.status(code.ok).json(data);
+    if (!data.status) {
+      return res.status(code.serverError).json({ status: false, errors: errMsg.serverError });
+    }
+    const resData = data;
+    resData.authCheck = res.locals.authCheck;
+    let question = null;
+    resData.questions.forEach((aQuestion) => {
+      question = aQuestion;
+      question.created = timeAgo(question.created_at);
+      question.manage = question.user_id === res.locals.user.id;
+    });
+    return res.status(code.ok).json(resData);
   });
 }
 

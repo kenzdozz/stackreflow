@@ -23,8 +23,8 @@ class Answer {
           + ' body varchar(3000),'
           + ' accepted boolean DEFAULT false,'
           + ' vote_count integer DEFAULT 0,'
-          + ' created_at date DEFAULT CURRENT_TIMESTAMP,'
-          + ' updated_at date DEFAULT CURRENT_TIMESTAMP );';
+          + ' created_at timestamp DEFAULT CURRENT_TIMESTAMP,'
+          + ' updated_at timestamp DEFAULT CURRENT_TIMESTAMP );';
 
     pool.connect((error, client, done) => {
       if (error) return callback({ status: false, message: error.stack });
@@ -38,11 +38,11 @@ class Answer {
 
   static find(id, callback) {
     let getQuery = {
-      text: 'SELECT * FROM answers WHERE id = $1',
+      text: 'SELECT answers.*, users.name AS username FROM answers LEFT JOIN users ON users.id = answers.user_id WHERE id = $1',
       values: [`${id}`],
     };
 
-    if (!id) getQuery = 'SELECT * FROM answers ORDER BY id DESC LIMIT 1';
+    if (!id) getQuery = 'SELECT answers.*, users.name AS username FROM answers LEFT JOIN users ON users.id = answers.user_id ORDER BY id DESC LIMIT 1';
 
     pool.connect((error, client, done) => {
       if (error) return callback({ status: false, message: error.stack });
@@ -104,7 +104,7 @@ class Answer {
   }
 
   static findAll(callback) {
-    const getQuery = 'SELECT * FROM answers ORDER BY created_at';
+    const getQuery = 'SELECT answers.*, users.name AS username FROM answers LEFT JOIN users ON users.id = answers.user_id ORDER BY created_at';
 
     pool.connect((error, client, done) => {
       if (error) return callback({ status: false, message: error.stack });
@@ -118,7 +118,7 @@ class Answer {
 
   static findForQuestion(id, callback) {
     const getQuery = {
-      text: 'SELECT * FROM answers WHERE question_id = $1',
+      text: 'SELECT answers.*, users.name AS username FROM answers LEFT JOIN users ON users.id = answers.user_id WHERE question_id = $1',
       values: [`${id}`],
     };
 

@@ -17,8 +17,8 @@ class User {
           + ' name varchar(100),'
           + ' email varchar(100) UNIQUE,'
           + ' password varchar(255),'
-          + ' created_at date DEFAULT CURRENT_TIMESTAMP,'
-          + ' updated_at date DEFAULT CURRENT_TIMESTAMP );';
+          + ' created_at timestamp DEFAULT CURRENT_TIMESTAMP,'
+          + ' updated_at timestamp DEFAULT CURRENT_TIMESTAMP );';
 
     pool.connect((error, client, done) => {
       if (error) return callback({ status: false, message: error.stack });

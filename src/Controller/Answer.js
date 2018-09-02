@@ -1,18 +1,18 @@
 import Question from '../Model/Question';
-import { code, errMsg } from '../config';
+import { code, errMsg, timeAgo } from '../config';
 import Answer from '../Model/Answer';
 
 function validate(req) {
-  const msg = [];
+  const msg = {};
   let status = true;
 
   if (!req.body.body || req.body.body === '') {
-    msg.push('Question body is required.');
+    msg.body = 'Answer body is required.';
     status = false;
   }
   return {
     status,
-    message: JSON.stringify(msg),
+    errors: msg,
   };
 }
 
@@ -30,7 +30,12 @@ function postAnswer(req, res) {
     if (!data.status) {
       return res.status(code.serverError).json({ status: false, errors: errMsg.serverError });
     }
-    return res.status(code.ok).json(data);
+    const resData = data;
+    Question.update(resData.answer.question_id, { answer_count: 1 }, (data) => {
+      console.log(data)
+    });
+    resData.answer.created = timeAgo(resData.answer.created_at);
+    return res.status(code.ok).json(resData);
   });
 }
 

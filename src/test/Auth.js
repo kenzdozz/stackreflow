@@ -1,4 +1,4 @@
-/* global describe it */
+/* global describe it before */
 /* eslint-disable import/no-extraneous-dependencies */
 /* eslint-disable prefer-destructuring */
 import chai from 'chai';
@@ -9,21 +9,19 @@ import User from '../Model/User';
 const expect = chai.expect;
 chai.use(chaiHttp);
 
-User.createTable(data => { });
+User.createTable(() => { });
 
 describe('Authentication', () => {
-
-  let newUser = new User();
+  const newUser = new User();
   newUser.name = 'Kenneth';
   newUser.email = 'kenzdozz@gmail.com';
   newUser.password = 'chidozie';
 
-  before(function (done) {
-
+  before((done) => {
     User.empty((err) => {
       if (err) throw err;
 
-      newUser.save(data => {
+      newUser.save(() => {
         done();
       });
     });

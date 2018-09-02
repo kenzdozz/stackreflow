@@ -1,4 +1,4 @@
-/* global describe it */
+/* global describe it before */
 /* eslint-disable import/no-extraneous-dependencies */
 /* eslint-disable prefer-destructuring */
 import chai from 'chai';
@@ -9,11 +9,10 @@ import User from '../Model/User';
 const expect = chai.expect;
 chai.use(chaiHttp);
 
-User.createTable(data => { });
+User.createTable(() => { });
 
 describe('Users', () => {
-
-  let newUser = new User();
+  const newUser = new User();
   newUser.name = 'Kenneth';
   newUser.email = 'kenzdozz@gmail.com';
   newUser.password = 'chidozie';
@@ -21,17 +20,16 @@ describe('Users', () => {
   let user = null;
   let token = null;
 
-  before(function (done) {
-
+  before((done) => {
     User.empty((err) => {
       if (err) throw err;
 
-      newUser.save(data => {
+      newUser.save((data) => {
         user = data.user;
 
         chai.request(app).post('/api/v1/auth/login')
-          .send({ email: 'kenzdozz@gmail.com', password: 'chidozie', })
-          .end((err, res) => {
+          .send({ email: 'kenzdozz@gmail.com', password: 'chidozie' })
+          .end((error, res) => {
             token = res.body.token;
             done();
           });
@@ -41,7 +39,6 @@ describe('Users', () => {
 
   describe('GET /users', () => {
     it('Should get all users', (done) => {
-
       chai.request(app).get('/api/v1/users').send({ token })
         .end((err, res) => {
           expect(res.statusCode, 'Should be 200').to.equal(200);
@@ -54,7 +51,6 @@ describe('Users', () => {
 
   describe('GET /users/:userId', () => {
     it('Should get one user', (done) => {
-
       chai.request(app).get(`/api/v1/users/${user.id}`).send({ token })
         .end((errr, res) => {
           expect(res.statusCode, 'Should be 200').to.equal(200);

@@ -22,8 +22,8 @@ class Question {
           + ' tags varchar(255) NULL,'
           + ' answer_count integer DEFAULT 0,'
           + ' view_count integer DEFAULT 0,'
-          + ' created_at date DEFAULT CURRENT_TIMESTAMP,'
-          + ' updated_at date DEFAULT CURRENT_TIMESTAMP );';
+          + ' created_at timestamp DEFAULT CURRENT_TIMESTAMP,'
+          + ' updated_at timestamp DEFAULT CURRENT_TIMESTAMP );';
 
     pool.connect((error, client, done) => {
       if (error) return callback({ status: false, message: error.stack });
@@ -37,11 +37,11 @@ class Question {
 
   static find(id, callback) {
     let getQuery = {
-      text: 'SELECT * FROM questions WHERE id = $1',
+      text: 'SELECT questions.*, users.name AS username FROM questions LEFT JOIN users ON users.id = questions.user_id WHERE questions.id = $1 ',
       values: [`${id}`],
     };
 
-    if (!id) getQuery = 'SELECT * FROM questions ORDER BY id DESC LIMIT 1';
+    if (!id) getQuery = 'SELECT questions.*, users.name AS username FROM questions LEFT JOIN users ON users.id = questions.user_id ORDER BY id DESC LIMIT 1';
 
     pool.connect((error, client, done) => {
       if (error) return callback({ status: false, message: error.stack });
@@ -85,6 +85,14 @@ class Question {
       set += `tags = $${i += 1} `;
       values.push(aQuestion.tags);
     }
+    if (aQuestion.view_count) {
+      set += `view_count = view_count + 1 `;
+      // values.push(aQuestion.view_count);
+    }
+    if (aQuestion.answer_count) {
+      set += `answer_count = answer_count + 1 `;
+      // values.push(aQuestion.answer_count);
+    }
     values.push(id);
 
     const updateQuery = {
@@ -103,7 +111,7 @@ class Question {
   }
 
   static findAll(callback) {
-    const getQuery = 'SELECT * FROM questions ORDER BY created_at';
+    const getQuery = 'SELECT questions.*, users.name AS username FROM questions LEFT JOIN users ON users.id = questions.user_id ORDER BY questions.created_at DESC';
 
     pool.connect((error, client, done) => {
       if (error) return callback({ status: false, message: error.stack });

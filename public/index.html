@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Stackreflow</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" media="screen" href="./css/main.css" />
+    <link rel="stylesheet" type="text/css" media="screen" href="./css/font-awesome.min.css" />
+    <!-- <script src="main.js"></script> -->
+</head>
+
+<body>
+    <header>
+        <div id="loadBar"></div>
+        <div class="container header">
+            <div>
+                <img src="./stack.png" class="logo">
+            </div>
+            <form class="search-form">
+                <input type="text" placeholder="Search..." name="search">
+            </form>
+            <div class="nav">
+                <a class="login hide" href="login.html">Login</a>
+                <a class="signup hide" href="signup.html">Sign up</a>
+            </div>
+        </div>
+    </header>
+
+    <div class="wrapper">
+        <div class="container d-row">
+            <div class="sidebar-right">
+
+            </div>
+            <div class="content">
+                <a class="btn success mb1 fr" href="ask.html">Ask Question</a>
+                <h1 class="mt0">Questions</h1>
+                <div class="questions">
+                    <div id="q1" class="question">
+                        <div class="votes">
+                            <span class="mini-count">0</span>
+                            <span> views</span>
+                        </div>
+                        <div class="answers">
+                            <span class="mini-count">0</span>
+                            <span> answers</span>
+                        </div>
+                        <div class="summary">
+                            <h4>How can I write CSS without selectorswrite CSS without selectorswrite CSS without selectorswrite
+                                CSS without selectors?</h4>
+                            <div class="tags">android</div>
+                            <div class="authored">
+                                <span class="time">21 mins ago </span>
+                                <a class="author" href="#">KenzDozz</a>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- <div id="q1" class="question">
+                        <div class="votes">
+                            <span class="mini-count">0</span>
+                            <span> views</span>
+                        </div>
+                        <div class="answers">
+                            <span class="mini-count">0</span>
+                            <span> answers</span>
+                        </div>
+                        <div class="summary">
+                            <h4>How can I write CSS without selectorswrite CSS without selectorswrite CSS without selectorswrite
+                                CSS without selectors?</h4>
+                            <div class="tags">android</div>
+                            <div class="authored">
+                                <span class="time">21 mins ago </span>
+                                <a class="author" href="#">KenzDozz</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="q1" class="question">
+                        <div class="votes">
+                            <span class="mini-count">0</span>
+                            <span> views</span>
+                        </div>
+                        <div class="answers">
+                            <span class="mini-count">0</span>
+                            <span> answers</span>
+                        </div>
+                        <div class="summary">
+                            <h4>How can I write CSS without selectorswrite CSS without selectorswrite CSS without selectorswrite
+                                CSS without selectors?</h4>
+                            <div class="tags">android</div>
+                            <div class="authored">
+                                <span class="time">21 mins ago </span>
+                                <a class="author" href="#">KenzDozz</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="q1" class="question">
+                        <div class="votes">
+                            <span class="mini-count">0</span>
+                            <span> views</span>
+                        </div>
+                        <div class="answers">
+                            <span class="mini-count">0</span>
+                            <span> answers</span>
+                        </div>
+                        <div class="summary">
+                            <h4>How can I write CSS without selectorswrite CSS without selectorswrite CSS without selectorswrite
+                                CSS without selectors?</h4>
+                            <div class="tags">android</div>
+                            <div class="authored">
+                                <span class="time">21 mins ago </span>
+                                <a class="author" href="#">KenzDozz</a>
+                            </div>
+                        </div>
+                    </div> -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+
+        <div class="footer"></div>
+    </footer>
+
+    <script>
+        window.onload = () => {
+            let loader = '<div class="loader"><i class="fa fa-spinner fa-spin"></i></div>';
+
+            const questionsDiv = document.querySelector('.questions');
+            questionsDiv.innerHTML = loader;
+
+            fetch('http://localhost:3033/api/v1/questions', {
+                method: 'GET',
+                mode: 'cors',
+                // dataType: "json",
+                headers: {
+                    "Content-Type": "application/json; charset=utf-8",
+                    'x-access-token': localStorage.getItem('userToken'),
+                },
+            }).then((data) => {
+                console.log(data);
+                return data.json();
+            }).then(response => {
+                handleBtn(response.authCheck);
+                if (!response.status) {
+                    return;
+                }
+                let questions = '';
+                response.questions.forEach(question => {
+                    questions += `
+                        <div id="q${question.id}" class="question">
+                        <div class="votes">
+                            <span class="mini-count">${question.view_count}</span>
+                            <span> views</span>
+                        </div>
+                        <div class="answers">
+                            <span class="mini-count">${question.answer_count}</span>
+                            <span> answers</span>
+                        </div>
+                        <div class="summary">
+                            <h4><a href="question.html?id=${question.id}">${question.title}</a></h4>
+                            <div class="tags">${question.tags != 'undefined' ? question.tags : ''}</div>
+                            <div class="authored">
+                                <span class="time">${question.created} </span> 
+                                <a class="author" href="user.html?id=${question.user_id}">${question.username}</a>
+                            </div>
+                        </div>
+                    </div>`;
+                });
+                questionsDiv.innerHTML = questions;
+                console.log(response);
+            }).catch(err => {
+                console.log(err)
+                handleBtn(false);
+            });
+        }
+
+        function handleBtn(authCheck) {
+            const loginBtn = document.querySelector('.nav .login');
+            const signupBtn = document.querySelector('.nav .signup');
+            if (authCheck) {
+                loginBtn.setAttribute('href', '/user.html');
+                loginBtn.innerHTML = 'My Account';
+                loginBtn.classList.remove('hide');
+                signupBtn.setAttribute('href', '/logout.html');
+                signupBtn.innerHTML = 'Logout';
+                signupBtn.classList.remove('hide');
+            } else {
+                loginBtn.classList.remove('hide');
+                signupBtn.classList.remove('hide');
+            }
+        }
+    </script>
+
+</body>
+
+</html>

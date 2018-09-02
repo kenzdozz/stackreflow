@@ -1,4 +1,4 @@
-/* global describe it beforeEach */
+/* global describe it before */
 /* eslint-disable import/no-extraneous-dependencies */
 /* eslint-disable prefer-destructuring */
 import chai from 'chai';
@@ -13,13 +13,12 @@ chai.use(chaiHttp);
 
 
 describe('Answer', () => {
-
-  let newQuestion = new Question();
+  const newQuestion = new Question();
   newQuestion.title = 'How can I test this test?';
   newQuestion.body = 'How will I write a test code to test my test codes on nodejs?';
   newQuestion.tags = 'test, test code';
 
-  let newUser = new User();
+  const newUser = new User();
   newUser.name = 'Kenneth';
   newUser.email = 'kenzdozz@gmail.com';
   newUser.password = 'chidozie';
@@ -29,27 +28,26 @@ describe('Answer', () => {
   let token = null;
   let answerId = null;
 
-  before(function (done) {
-
-    Question.createTable(data => {
-      Answer.createTable(data => {
-        Answer.empty((err) => {
-          if (err) throw err;
-          Question.empty((err) => {
-            if (err) throw err;
+  before((done) => {
+    Question.createTable(() => {
+      Answer.createTable(() => {
+        Answer.empty((error) => {
+          if (error) throw error;
+          Question.empty((errr) => {
+            if (errr) throw errr;
             User.empty((err) => {
               if (err) throw err;
 
-              newUser.save(data => {
+              newUser.save((data) => {
                 user = data.user;
                 newQuestion.userId = user.id;
 
-                newQuestion.save(data => {
-                  question = data.question;
+                newQuestion.save((data2) => {
+                  question = data2.question;
 
                   chai.request(app).post('/api/v1/auth/login')
-                    .send({ email: 'kenzdozz@gmail.com', password: 'chidozie', })
-                    .end((err, res) => {
+                    .send({ email: 'kenzdozz@gmail.com', password: 'chidozie' })
+                    .end((er, res) => {
                       token = res.body.token;
                       done();
                     });
@@ -66,7 +64,7 @@ describe('Answer', () => {
     it('Should post answer to a question with id', (done) => {
       const answer = {
         body: 'By writing test code to test the test code.',
-        token: token,
+        token,
       };
       chai.request(app).post(`/api/v1/questions/${question.id}/answers`).send(answer)
         .end((err, res) => {
@@ -81,7 +79,7 @@ describe('Answer', () => {
   describe('PUT /questions/:questionId/answers/:answerId', () => {
     it('Should accept an answer to a question', (done) => {
       chai.request(app).put(`/api/v1/questions/${question.id}/answers/${answerId}`)
-        .send({ token: token }).end((err, res) => {
+        .send({ token }).end((err, res) => {
           expect(res.statusCode, 'Should be 200').to.equal(200);
           expect(res.body, 'Should return object').to.be.a('object');
           done();
