@@ -2,7 +2,6 @@ import express from 'express';
 import bodyParser from 'body-parser';
 import cors from 'cors';
 import jwt from 'jsonwebtoken';
-import cookieParser from 'cookie-parser';
 import registerRoutes from './Controller/Register';
 import userRoutes from './Controller/User';
 import loginRoutes from './Controller/Login';
@@ -16,7 +15,6 @@ import Vote from './Model/Vote';
 import path from 'path';
 
 const app = express();
-app.use(cookieParser());
 const apiRouter = express.Router();
 
 app.use(cors());
