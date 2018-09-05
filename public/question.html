@@ -104,7 +104,7 @@
 
             const questionsDiv = document.querySelector('.questions');
             questionsDiv.innerHTML = loader;
-            const url = `http://localhost:3033/api/v1/questions/${getParameterByName('id')}`;
+            const url = `${BaseUrl}/api/v1/questions/${getParameterByName('id')}`;
 
             fetchCall(url, 'GET', null, (error, response) => {
                 if (error) {
@@ -201,7 +201,7 @@
             if (submitBtn.childNodes.length === 1) submitBtn.appendChild(loader);
             form.querySelectorAll('.input-error').forEach(input => input.innerHTML = '');
 
-            const url = `http://localhost:3033/api/v1/questions/${getParameterByName('id')}/answers`;
+            const url = `${BaseUrl}/api/v1/questions/${getParameterByName('id')}/answers`;
             fetchCall(url, 'POST', question, (err, response) => {
                 if (err) return submitBtn.removeChild(loader);
 
@@ -269,7 +269,7 @@
             let url = null;
 
             if (action === 1) {
-                url = `http://localhost:3033/api/v1/questions/${getParameterByName('id')}/answers/${answerId}/upvote`;
+                url = `${BaseUrl}/api/v1/questions/${getParameterByName('id')}/answers/${answerId}/upvote`;
                 anchor.classList.add('voted');
                 addCount = removeVote ? -1 : 1;
                 if (hasClass(dVote, 'voted')) {
@@ -279,7 +279,7 @@
                 }
                 vCount.innerHTML = parseInt(vCount.innerHTML) + addCount;
             } else {
-                url = `http://localhost:3033/api/v1/questions/${getParameterByName('id')}/answers/${answerId}/downvote`;
+                url = `${BaseUrl}/api/v1/questions/${getParameterByName('id')}/answers/${answerId}/downvote`;
                 anchor.classList.add('voted');
                 addCount = removeVote ? 1 : -1;
                 if (hasClass(uVote, 'voted')) {
@@ -324,7 +324,7 @@
             if (!confirm(msg)) return;
             anchor.innerHTML = '<i class="fa fa-spinner fa-spin"></i>';
             const answerId = anchor.dataset.id;
-            const url = `http://localhost:3033/api/v1/questions/${getParameterByName('id')}/answers/${answerId}`;
+            const url = `${BaseUrl}/api/v1/questions/${getParameterByName('id')}/answers/${answerId}`;
             let answersCount = document.querySelector('.question .answers .mini-count');
 
             fetchCall(url, 'PUT', null, (err, res) => {
@@ -347,7 +347,7 @@
             if (!confirm('Delete this answer?')) return;
             anchor.innerHTML = '<i class="fa fa-spinner fa-spin"></i>';
             const answerId = anchor.dataset.id;
-            const url = `http://localhost:3033/api/v1/questions/${getParameterByName('id')}/answers/${answerId}`;
+            const url = `${BaseUrl}/api/v1/questions/${getParameterByName('id')}/answers/${answerId}`;
             let answersCount = document.querySelector('.question .answers .mini-count');
 
             fetchCall(url, 'DELETE', null, (err, res) => {
@@ -361,7 +361,7 @@
             if (!confirm('Delete this question?')) return;
             anchor.innerHTML = '<i class="fa fa-spinner fa-spin"></i>';
             const questionId = anchor.dataset.id;
-            const url = `http://localhost:3033/api/v1/questions/${questionId}`;
+            const url = `${BaseUrl}/api/v1/questions/${questionId}`;
 
             fetchCall(url, 'DELETE', null, (err, res) => {
                 if (err) return anchor.innerHTML = '<i class="fa fa-trash"></i>';

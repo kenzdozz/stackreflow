@@ -50,7 +50,7 @@
             if (loginBtn.childNodes.length === 1) loginBtn.appendChild(loader);
             form.querySelectorAll('.input-error').forEach(input => input.innerHTML = '');
 
-            const url = 'http://localhost:3033/api/v1/auth/signup';
+            const url = `${BaseUrl}/api/v1/auth/signup`;
             fetchCall(url, 'POST', user, (err, response) => {
                 if (err) return loginBtn.removeChild(loader);
                 if (!response.status) {

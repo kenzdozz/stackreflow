@@ -90,7 +90,7 @@
 
             const usersDiv = document.querySelector('.user');
             usersDiv.innerHTML = loader;
-            const url = `http://localhost:3033/api/v1/users/${getParameterByName('id')}`;
+            const url = `${BaseUrl}/api/v1/users/${getParameterByName('id')}`;
 
             fetchCall(url, 'GET', null, (error, response) => {
                 if (error) {
@@ -160,7 +160,7 @@
             questionsDiv.innerHTML = loader;
             let params = answers ? 'type=answers' : '';
             params += top ? (params !== '' ? '&' : '') + 'sort=top' : '';
-            const url = `http://localhost:3033/api/v1/users/${getParameterByName('id')}?${params}`;
+            const url = `${BaseUrl}/api/v1/users/${getParameterByName('id')}?${params}`;
 
             fetchCall(url, 'GET', null, (error, response) => {
                 if (error) {

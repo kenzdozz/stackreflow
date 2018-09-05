@@ -73,7 +73,7 @@
             if (submitBtn.childNodes.length === 1) submitBtn.appendChild(loader);
             form.querySelectorAll('.input-error').forEach(input => input.innerHTML = '');
 
-            const url = 'http://localhost:3033/api/v1/questions';
+            const url = `${BaseUrl}/api/v1/questions`;
             fetchCall(url, 'POST', question, (error, response) => {
                 if (error) return submitBtn.removeChild(loader);
                 if (!response.status) {

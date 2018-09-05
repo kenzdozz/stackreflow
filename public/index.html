@@ -131,7 +131,7 @@
             const questionsDiv = document.querySelector('.questions');
             questionsDiv.innerHTML = loader;
 
-            const url = 'http://localhost:3033/api/v1/questions';
+            const url = `${BaseUrl}/api/v1/questions`;
             fetchCall(url, 'GET', null, (err, response) => {
                 console.log(err);
                 console.log(response);
