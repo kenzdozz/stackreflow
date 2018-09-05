@@ -54,7 +54,6 @@ loginRoutes(apiRouter);
 questionRoutes(apiRouter);
 answerRoutes(apiRouter);
 
-// viewed at http://localhost:8080
-app.listen(3033);
+app.listen(process.env.PORT || 5000);
 
 export default app;
