@@ -15,11 +15,14 @@ import Vote from './Model/Vote';
 import path from 'path';
 
 
-User.createTable(() => { });
-Question.createTable(() => { });
-Answer.createTable(() => { });
-Vote.createTable((data) => {
-  console.log(data);
+User.createTable(() => {
+  Question.createTable(() => {
+    Answer.createTable(() => {
+      Vote.createTable((data) => {
+        console.log(data);
+      });
+    });
+  });
 });
 
 const app = express();
