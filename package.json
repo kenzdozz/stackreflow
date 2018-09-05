@@ -2,7 +2,7 @@
   "name": "stackreflow",
   "version": "1.0.0",
   "description": "Andela VLF Assessment --- Stackoverflow lite",
-  "main": "app.js",
+  "main": "lib/app.js",
   "scripts": {
     "test": "babel src/ -d lib/ && mocha lib/test/ --exit",
     "build": "babel src -d lib",
