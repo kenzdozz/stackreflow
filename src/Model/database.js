@@ -4,4 +4,12 @@ const connectionString = `postgres://diabpyfbimjuya:c50f60c6ad2f56d26aa449bc5814
 
 const pool = new Pool({connectionString, ssl: true,});
 
+// const pool = new Pool({
+//   user: 'kenzdozz',
+//   host: 'localhost',
+//   database: 'stackreflow',
+//   password: 'chidozie',
+//   port: 5432,
+// });
+
 export default pool;

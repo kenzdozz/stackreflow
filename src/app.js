@@ -51,6 +51,8 @@ app.use((req, res, next) => {
   });
 });
 
+console.log(process.env.NODE_ENV);
+
 app.use('/api/v1', apiRouter);
 registerRoutes(apiRouter);
 userRoutes(apiRouter);
