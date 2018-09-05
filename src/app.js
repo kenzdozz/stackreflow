@@ -52,6 +52,8 @@ loginRoutes(apiRouter);
 questionRoutes(apiRouter);
 answerRoutes(apiRouter);
 
-app.listen(process.env.PORT || 5000);
+app.listen(process.env.PORT || 5000, () => {
+  console.log('Running now');
+});
 
 export default app;
