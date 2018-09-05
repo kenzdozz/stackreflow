@@ -115,9 +115,9 @@ class Question {
     const getQuery = 'SELECT questions.*, users.name AS username FROM questions LEFT JOIN users ON users.id = questions.user_id ORDER BY questions.created_at DESC';
 
     pool.connect((error, client, done) => {
-      console.log(error);
       if (error) return callback({ status: false, message: error.stack });
       return client.query(getQuery, (err, res) => {
+        console.log(err);
         done();
         if (err) return callback({ status: false, messages: err.stack });
         return callback({ status: true, questions: res.rows });
