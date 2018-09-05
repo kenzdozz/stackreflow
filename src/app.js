@@ -14,6 +14,14 @@ import Answer from './Model/Answer';
 import Vote from './Model/Vote';
 import path from 'path';
 
+
+User.createTable(() => { });
+Question.createTable(() => { });
+Answer.createTable(() => { });
+Vote.createTable((data) => {
+  console.log(data);
+});
+
 const app = express();
 const apiRouter = express.Router();
 
@@ -39,13 +47,6 @@ app.use((req, res, next) => {
     return next();
   });
 });
-
-Vote.createTable((data) => {
-  console.log(data);
-});
-User.createTable(() => { });
-Question.createTable(() => { });
-Answer.createTable(() => { });
 
 app.use('/api/v1', apiRouter);
 registerRoutes(apiRouter);
