@@ -133,8 +133,6 @@
 
             const url = `${BaseUrl}/api/v1/questions`;
             fetchCall(url, 'GET', null, (err, response) => {
-                console.log(err);
-                console.log(response);
                 if (err) return handleBtn(false);handleBtn(response.authCheck);
                 if (!response.status) {
                     return;

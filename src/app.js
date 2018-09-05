@@ -34,7 +34,6 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname + '/../public')));
 
 app.use((req, res, next) => {
-  return res.status(200).json({hh: 'iihihih'});
   res.locals.user = {};
   const token = req.body.token || req.query.token || req.headers['x-access-token'] || 'none';
   return jwt.verify(token, jwtSecret, (err, data) => {
