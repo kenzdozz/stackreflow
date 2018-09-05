@@ -12,6 +12,8 @@ import answerRoutes from './Controller/Answer';
 import User from './Model/User';
 import Question from './Model/Question';
 import Answer from './Model/Answer';
+import Vote from './Model/Vote';
+import path from 'path';
 
 const app = express();
 app.use(cookieParser());
@@ -26,12 +28,12 @@ app.use((req, res, next) => {
   const token = req.body.token || req.query.token || req.headers['x-access-token'] || 'none';
   return jwt.verify(token, jwtSecret, (err, data) => {
     if (err) {
-      if (req.method === 'GET') {
+      if (req.method === 'GET' || req.path === '/api/v1/auth/login' || req.path === '/api/v1/auth/signup') {
         res.locals.authCheck = false;
         return next();
       }
       return res.status(code.unAuthorized)
-        .json({ status: false, errors: 'Unauthorized Access - invalid or no token', });
+        .json({ status: false, errors: 'Unauthorized Access - invalid or no token' });
     }
     res.locals.user = data;
     res.locals.authCheck = true;
@@ -39,12 +41,10 @@ app.use((req, res, next) => {
   });
 });
 
+Vote.createTable(() => {});
 User.createTable(() => { });
 Question.createTable(() => { });
 Answer.createTable(() => { });
-
-
-app.use(express.static(`${__dirname}/public`));
 
 app.use('/api/v1', apiRouter);
 registerRoutes(apiRouter);
@@ -53,6 +53,10 @@ loginRoutes(apiRouter);
 questionRoutes(apiRouter);
 answerRoutes(apiRouter);
 
+// viewed at http://localhost:8080
+app.get('/', function(req, res) {
+    res.sendFile(path.join(__dirname + '/index.html'));
+});
 app.listen(3033);
 
 export default app;

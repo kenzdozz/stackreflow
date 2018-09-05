@@ -34,6 +34,7 @@
         </div>
     </div>
 
+    <script src="./js/functions.js"></script>
     <script>
         document.querySelector('form').onsubmit = function (event) {
             event.preventDefault();
@@ -49,17 +50,9 @@
             if (loginBtn.childNodes.length === 1) loginBtn.appendChild(loader);
             form.querySelectorAll('.input-error').forEach(input => input.innerHTML = '');
 
-            fetch('http://localhost:3033/api/v1/auth/signup', {
-                method: 'POST',
-                mode: 'cors',
-                dataType: "json",
-                headers: {
-                    "Content-Type": "application/json; charset=utf-8",
-                },
-                body: JSON.stringify(user),
-            }).then((data) => {
-                return data.json();
-            }).then(response => {
+            const url = 'http://localhost:3033/api/v1/auth/signup';
+            fetchCall(url, 'POST', user, (err, response) => {
+                if (err) return loginBtn.removeChild(loader);
                 if (!response.status) {
                     for (var key in response.errors) {
                         document.querySelector('.input-error.' + key).innerHTML = response.errors[key];
@@ -73,9 +66,7 @@
                 form.prepend(success);
                 setTimeout(() => {
                     location.href = 'login.html';
-                }, 3000);
-            }).catch(err => {
-                loginBtn.removeChild(loader);
+                }, 2000);
             });
         }
     </script>

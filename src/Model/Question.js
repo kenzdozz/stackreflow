@@ -20,6 +20,7 @@ class Question {
           + ' title varchar(100),'
           + ' body varchar(3000),'
           + ' tags varchar(255) NULL,'
+          + ' answered boolean DEFAULT false,'
           + ' answer_count integer DEFAULT 0,'
           + ' view_count integer DEFAULT 0,'
           + ' created_at timestamp DEFAULT CURRENT_TIMESTAMP,'
@@ -78,21 +79,21 @@ class Question {
       values.push(aQuestion.title);
     }
     if (aQuestion.body) {
-      set += `body = $${i += 1} `;
+      set += `${set === '' ? '' : ','} body = $${i += 1} `;
       values.push(aQuestion.body);
     }
     if (aQuestion.tags) {
-      set += `tags = $${i += 1} `;
+      set += `${set === '' ? '' : ','} tags = $${i += 1} `;
       values.push(aQuestion.tags);
     }
     if (aQuestion.view_count) {
-      set += `view_count = view_count + 1 `;
-      // values.push(aQuestion.view_count);
+      set += `${set === '' ? '' : ','} view_count = view_count + 1 `;
     }
     if (aQuestion.answer_count) {
-      set += `answer_count = answer_count + 1 `;
-      // values.push(aQuestion.answer_count);
+      set += `${set === '' ? '' : ','} ${aQuestion.answer_count === 1 ? 'answer_count = answer_count + 1 ' : 'answer_count = answer_count - 1 '}`;
     }
+    set += `${set === '' ? '' : ','} answered = $${i += 1} `;
+    values.push(aQuestion.answered || false);
     values.push(id);
 
     const updateQuery = {
@@ -123,9 +124,10 @@ class Question {
     });
   }
 
-  static findForUser(id, callback) {
+  static findForUser(id, sort, callback) {
+    const orderBy = sort === 'top' ? ' ORDER BY answer_count DESC ' : ' ORDER BY created_at DESC ';
     const getQuery = {
-      text: 'SELECT * FROM questions WHERE user_id = $1',
+      text: `SELECT * FROM questions WHERE user_id = $1 ${orderBy}`,
       values: [`${id}`],
     };
 

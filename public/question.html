@@ -16,7 +16,7 @@
         <div id="loadBar"></div>
         <div class="container header">
             <div>
-                <img src="./stack.png" class="logo">
+                <a href="index.html"><img src="./stack.png" class="logo"></a>
             </div>
             <form class="search-form">
                 <input type="text" placeholder="Search..." name="search">
@@ -36,12 +36,12 @@
             <div class="content">
                 <a class="btn success mb1 fr" href="ask.html">Ask Question</a>
                 <div class="questions" style="width: 80%;">
-                    <h3 class="qtitle">How can I write CSS without selectorswrite CSS without selectorswrite CSS without selectorswrite CSS
-                        without selectors?</h3>
+                    <h3 class="qtitle">How can I write CSS without selectorswrite CSS without selectorswrite CSS without
+                        selectorswrite CSS without selectors?</h3>
                     <div id="q1" class="question">
                         <div class="summary">
-                            <p class="mt0">How can I write CSS without selectorswrite CSS without selectorswrite CSS without selectorswrite
-                                CSS without selectors?</p>
+                            <p class="mt0">How can I write CSS without selectorswrite CSS without selectorswrite CSS without
+                                selectorswrite CSS without selectors?</p>
                             <div class="tags">android</div>
                             <div class="authored">
                                 <span class="time">21 mins ago </span>
@@ -67,8 +67,8 @@
                                 <i class="fa fa-arrow-circle-down"></i>
                             </div>
                             <div class="summary">
-                                <p class="mt0">How can I write CSS without selectorswrite CSS without selectorswrite CSS without selectorswrite
-                                    CSS without selectors?</p>
+                                <p class="mt0">How can I write CSS without selectorswrite CSS without selectorswrite CSS
+                                    without selectorswrite CSS without selectors?</p>
                                 <div class="tags">android</div>
                                 <div class="authored">
                                     <span class="time">21 mins ago </span>
@@ -96,29 +96,32 @@
         <div class="footer"></div>
     </footer>
 
+    <script src="./js/functions.js"></script>
     <script>
+        let manageQ = null;
         window.onload = () => {
             let loader = '<div class="loader"><i class="fa fa-spinner fa-spin"></i></div>';
 
             const questionsDiv = document.querySelector('.questions');
             questionsDiv.innerHTML = loader;
+            const url = `http://localhost:3033/api/v1/questions/${getParameterByName('id')}`;
 
-            fetch(`http://localhost:3033/api/v1/questions/${getParameterByName('id')}`, {
-                method: 'GET',
-                mode: 'cors',
-                headers: {
-                    "Content-Type": "application/json; charset=utf-8",
-                    'x-access-token': localStorage.getItem('userToken'),
-                },
-            }).then((data) => {
-                console.log(data);
-                return data.json();
-            }).then(response => {
+            fetchCall(url, 'GET', null, (error, response) => {
+                if (error) {
+                    questionsDiv.innerHTML = '<h2>An error has been encountered.</h2>';
+                    document.querySelector('.answer').remove();
+                    console.log(error);
+                    return handleBtn(false);
+                }
+
                 handleBtn(response.authCheck);
                 if (!response.status) {
+                    document.querySelector('.answer').remove();
+                    questionsDiv.innerHTML = '<h2>Question Not Found</h2>';
                     return;
                 }
                 const question = response.question;
+                manageQ = question.manage;
                 let questionDiv = `<h3 class="qtitle">${question.title}</h3>
                     <div id="q${question.id}" class="question">
                         <div class="summary">
@@ -133,23 +136,36 @@
                             <span class="mini-count">${question.view_count}</span>
                             <span> views</span>
                         </div>
-                        <div class="answers">
+                        <div class="answers ${question.answered ? 'accepted' : ''}">
                             <span class="mini-count">${question.answer_count}</span>
                             <span> answers</span>
-                        </div>
-                    </div>
-                    <div class="answers">`;
+                        </div>`;
+                if (question.manage) {
+                    questionDiv += `<a href="javascript:;" class="delete-question fr" data-id="${question.id}"><i class="fa fa-trash"></i></a>`;
+                }
+                questionDiv += `</div><div class="answers">`;
                 response.answers.forEach(answer => {
                     questionDiv += `
                         <div id="a${answer.id}" class="answer my3">
                             <div class="voting"><div class="votes">
-                                <i class="fa fa-arrow-circle-up"></i>
+                                <a class="${answer.voted === 1 ? 'voted' : ''} upvote" title="Upvote" href="javascript:;" data-id="${answer.id}">
+                                <i class="fa fa-arrow-circle-up"></i></a>
                             </div>
-                            <span>${answer.vote_count}</span>
+                            <span class="vcount">${answer.vote_count}</span>
                             <div class="votes">
-                                <i class="fa fa-arrow-circle-down"></i>
-                            </div></div>
-                            <div class="summary">
+                                <a class="${answer.voted === -1 ? 'voted' : ''} downvote" title="Down vote" href="javascript:;" data-id="${answer.id}">
+                                    <i class="fa fa-arrow-circle-down"></i>
+                                </a>
+                            </div></div>`;
+                    if (question.manage) {
+                        questionDiv += `<a href="javascript:;" title="Accept answer" class="accept-answer ${answer.accepted ? 'accepted' : ''}" data-id="${answer.id}">
+                            <i class="fa fa-check"></i></a>
+                            <a href="javascript:;" class="delete-answer fr" data-id="${answer.id}"><i class="fa fa-trash"></i></a>`;
+                    } else if (answer.accepted) {
+                        questionDiv += `<span class="accept-answer accepted" data-id="${answer.id}">
+                            <i class="fa fa-check"></i></span>`;
+                    }
+                    questionDiv += `<div class="summary">
                                 <p class="mt0">${answer.body}</p>
                                 <div class="authored">
                                     <span class="time">${answer.created} </span>
@@ -160,13 +176,17 @@
                 });
                 questionDiv += `</div>`;
                 questionsDiv.innerHTML = questionDiv;
-                console.log(response);
-            }).catch(err => {
-                console.log(err)
-                handleBtn(false);
+
+                const hash = location.href.substring(location.href.indexOf("#") + 1);
+                if (location.href.indexOf("#") > 0) {
+                    const elemScroll = document.querySelector(`#${hash}`);
+                    elemScroll.style.background = '#f58021';
+                    elemScroll.scrollIntoView({ behavior: "smooth", block: "center", inline: "nearest" });
+                    elemScroll.style.transition = "background 3s";
+                    elemScroll.style.background = "#fff";
+                }
             });
         }
-
 
         document.querySelector('#answerQuestion').onsubmit = function (event) {
             event.preventDefault();
@@ -181,20 +201,10 @@
             if (submitBtn.childNodes.length === 1) submitBtn.appendChild(loader);
             form.querySelectorAll('.input-error').forEach(input => input.innerHTML = '');
 
-            fetch(`http://localhost:3033/api/v1/questions/${getParameterByName('id')}/answers`, {
-                method: 'POST',
-                mode: 'cors',
-                dataType: "json",
-                headers: {
-                    "Content-Type": "application/json; charset=utf-8",
-                    'x-access-token': localStorage.getItem('userToken'),
-                },
-                body: JSON.stringify(question),
-            }).then((data) => {
-                console.log(data);
-                return data.json();
-            }).then(response => {
-                console.log(response);
+            const url = `http://localhost:3033/api/v1/questions/${getParameterByName('id')}/answers`;
+            fetchCall(url, 'POST', question, (err, response) => {
+                if (err) return submitBtn.removeChild(loader);
+
                 if (!response.status) {
                     for (var key in response.errors) {
                         document.querySelector('.input-error.' + key).innerHTML = response.errors[key];
@@ -212,7 +222,12 @@
                             <span>${answer.vote_count}</span>
                             <div class="votes">
                                 <i class="fa fa-arrow-circle-down"></i>
-                            </div></div>
+                            </div></div>`;
+                if (manageQ) {
+                    questionDiv += `<a href="javascript:;" title="Accept answer" class="accept-answer" data-id="${answer.id}">
+                            <i class="fa fa-check"></i></a>`;
+                }
+                questionDiv += `<a href="javascript:;" class="delete-answer fr" data-id="${answer.id}"><i class="fa fa-trash"></i></a>
                             <div class="summary">
                                 <p class="mt0">${answer.body}</p>
                                 <div class="authored">
@@ -223,35 +238,135 @@
                         </div>`;
                 let questionsDiv = document.querySelector('.questions');
                 questionsDiv.innerHTML += questionDiv;
-            }).catch(err => {
-                submitBtn.removeChild(loader);
             });
         }
 
-        function handleBtn(authCheck) {
-            const loginBtn = document.querySelector('.nav .login');
-            const signupBtn = document.querySelector('.nav .signup');
-            if (authCheck) {
-                loginBtn.setAttribute('href', '/user.html');
-                loginBtn.innerHTML = 'My Account';
-                loginBtn.classList.remove('hide');
-                signupBtn.setAttribute('href', '/logout.html');
-                signupBtn.innerHTML = 'Logout';
-                signupBtn.classList.remove('hide');
-            } else {
-                loginBtn.classList.remove('hide');
-                signupBtn.classList.remove('hide');
+        document.addEventListener('click', function (event) {
+            if (!hasClass(event.target, 'fa')) return;
+            const anchor = event.path[1];
+            if (hasClass(anchor, 'delete-answer')) {
+                deleteAnswer(anchor);
+            } else if (hasClass(anchor, 'accept-answer')) {
+                acceptAnswer(anchor);
+            } else if (hasClass(anchor, 'delete-question')) {
+                deleteQuestion(anchor);
+            } else if (hasClass(anchor, 'upvote')) {
+                voteAnswer(anchor, 1);
+            } else if (hasClass(anchor, 'downvote')) {
+                voteAnswer(anchor, -1);
             }
+        }, false);
+
+        function voteAnswer(anchor, action) {
+            const answerId = anchor.dataset.id;
+            const removeVote = hasClass(anchor, 'voted');
+            const votingDiv = anchor.parentElement.parentElement;
+            const dVote = votingDiv.querySelector('.downvote');
+            const uVote = votingDiv.querySelector('.upvote');
+            const vCount = votingDiv.querySelector('.vcount');
+            let removed = false;
+            let addCount = 0;
+            let url = null;
+
+            if (action === 1) {
+                url = `http://localhost:3033/api/v1/questions/${getParameterByName('id')}/answers/${answerId}/upvote`;
+                anchor.classList.add('voted');
+                addCount = removeVote ? -1 : 1;
+                if (hasClass(dVote, 'voted')) {
+                    dVote.classList.remove('voted');
+                    removed = true;
+                    addCount = 2;
+                }
+                vCount.innerHTML = parseInt(vCount.innerHTML) + addCount;
+            } else {
+                url = `http://localhost:3033/api/v1/questions/${getParameterByName('id')}/answers/${answerId}/downvote`;
+                anchor.classList.add('voted');
+                addCount = removeVote ? 1 : -1;
+                if (hasClass(uVote, 'voted')) {
+                    uVote.classList.remove('voted');
+                    removed = true;
+                    addCount = -2;
+                }
+                vCount.innerHTML = parseInt(vCount.innerHTML) + addCount;
+            }
+            if (removeVote) anchor.classList.remove('voted');
+
+            fetchCall(url, 'PUT', null, (err, res) => {
+                if (err) {
+                    console.log(err);
+                    if (removeVote) anchor.classList.add('voted');
+                    else if (action === 1) {
+                        anchor.classList.remove('voted');
+                        addCount =removeVote ? 1 : -1;
+                        if (removed) {
+                            dVote.classList.add('voted');
+                            addCount = -2;
+                        }
+                    } else {
+                        anchor.classList.remove('voted');
+                        addCount = removeVote ? -1 : 1;
+                        if (removed) {
+                            uVote.classList.add('voted');
+                            addCount = 2;
+                        }
+                    }
+                }
+            });
         }
 
-        function getParameterByName(name, url) {
-            if (!url) url = window.location.href;
-            name = name.replace(/[\[\]]/g, '\\$&');
-            var regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)'),
-                results = regex.exec(url);
-            if (!results) return null;
-            if (!results[2]) return '';
-            return decodeURIComponent(results[2].replace(/\+/g, ' '));
+        function acceptAnswer(anchor) {
+            let msg = 'Accept this answer?';
+            let accept = true;
+            if (hasClass(anchor, 'accepted')) {
+                msg = 'Reject this answer?';
+                accept = false;
+            }
+            if (!confirm(msg)) return;
+            anchor.innerHTML = '<i class="fa fa-spinner fa-spin"></i>';
+            const answerId = anchor.dataset.id;
+            const url = `http://localhost:3033/api/v1/questions/${getParameterByName('id')}/answers/${answerId}`;
+            let answersCount = document.querySelector('.question .answers .mini-count');
+
+            fetchCall(url, 'PUT', null, (err, res) => {
+                if (err) return anchor.innerHTML = '<i class="fa fa-check"></i>';
+                anchor.innerHTML = '<i class="fa fa-check"></i>';
+                document.querySelectorAll('.accept-answer.accepted').forEach(element => {
+                    element.setAttribute('class', 'accept-answer');
+                });
+                if (accept) {
+                    anchor.setAttribute('class', 'accept-answer accepted');
+                    document.querySelector('.question .answers').setAttribute('class', 'answers accepted');
+                } else {
+                    anchor.setAttribute('class', 'accept-answer');
+                    document.querySelector('.question .answers').setAttribute('class', 'answers');
+                }
+            });
+        }
+
+        function deleteAnswer(anchor) {
+            if (!confirm('Delete this answer?')) return;
+            anchor.innerHTML = '<i class="fa fa-spinner fa-spin"></i>';
+            const answerId = anchor.dataset.id;
+            const url = `http://localhost:3033/api/v1/questions/${getParameterByName('id')}/answers/${answerId}`;
+            let answersCount = document.querySelector('.question .answers .mini-count');
+
+            fetchCall(url, 'DELETE', null, (err, res) => {
+                if (err) return anchor.innerHTML = '<i class="fa fa-trash"></i>';
+                anchor.parentElement.remove();
+                answersCount.innerHTML = parseInt(answersCount.innerHTML) - 1;
+            });
+        }
+
+        function deleteQuestion(anchor) {
+            if (!confirm('Delete this question?')) return;
+            anchor.innerHTML = '<i class="fa fa-spinner fa-spin"></i>';
+            const questionId = anchor.dataset.id;
+            const url = `http://localhost:3033/api/v1/questions/${questionId}`;
+
+            fetchCall(url, 'DELETE', null, (err, res) => {
+                if (err) return anchor.innerHTML = '<i class="fa fa-trash"></i>';
+                location.href = 'index.html';
+            });
         }
     </script>
 

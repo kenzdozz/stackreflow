@@ -1,6 +1,7 @@
 import Question from '../Model/Question';
 import { code, errMsg, timeAgo } from '../config';
 import Answer from '../Model/Answer';
+import Vote from '../Model/Vote';
 
 function validate(req) {
   const msg = {};
@@ -37,33 +38,57 @@ function postQuestion(req, res) {
 }
 
 function getQuestion(req, res) {
+  const userId = res.locals.user.id;
   return Question.find(req.params.questionId, (data) => {
     if (!data.status) {
       return res.status(code.serverError).json({ status: false, errors: errMsg.serverError });
     }
-    if (!data.question) return res.status(code.ok).json({ status: true, question: {} });
+    if (!data.question) return res.status(code.ok).json({ status: false, question: {} });
     return Answer.findForQuestion(data.question.id, (data2) => {
       if (!data2.status) {
         return res.status(code.serverError).json({ status: false, errors: errMsg.serverError });
       }
       const aQuestion = data.question;
       aQuestion.created = timeAgo(aQuestion.created_at);
-      aQuestion.view_count = aQuestion.view_count + 1;
-      aQuestion.manage = aQuestion.user_id === res.locals.user.id;
-      const theAnswers = data2.answers;
-      let answer = null;
-      theAnswers.forEach((anAnswer) => {
-        answer = anAnswer;
+      aQuestion.view_count += 1;
+      aQuestion.manage = aQuestion.user_id === userId;
+      const theAnswers = [];
+
+      function handleAnswer(anAnswer, callback) {
+        if (!anAnswer) return callback();
+        const answer = anAnswer;
         answer.created = timeAgo(answer.created_at);
-        answer.manage = answer.user_id === res.locals.user.id;
-      });
-      const responseData = {
-        status: true,
-        question: aQuestion,
-        answers: theAnswers,
+        answer.manage = answer.user_id === userId;
+        if (!userId) {
+          theAnswers.push(answer);
+          return callback();
+        }
+        return Vote.find(userId, answer.id, (data3) => {
+          answer.voted = data3.vote ? data3.vote.vote : '';
+          theAnswers.push(answer);
+          callback();
+        });
+      }
+
+      let i = 0;
+      const loopAnswers = (answers) => {
+        handleAnswer(answers[i], () => {
+          i += 1;
+          if (i < answers.length) {
+            return loopAnswers(answers);
+          }
+          const responseData = {
+            status: true,
+            question: aQuestion,
+            answers: theAnswers,
+            authCheck: res.locals.authCheck,
+          };
+          Question.update(aQuestion.id, { view_count: 1 }, () => { });
+          return res.status(code.ok).json(responseData);
+        });
       };
-      Question.update(aQuestion.id, { view_count: 1 }, () => {});
-      return res.status(code.ok).json(responseData);
+
+      return loopAnswers(data2.answers);
     });
   });
 }

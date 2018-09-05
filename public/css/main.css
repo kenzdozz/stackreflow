@@ -325,3 +325,58 @@ div.loader {
     clear: both;
     display: block;
 }
+.accept-answer.accepted, .answers.accepted{
+    background: darkgreen;
+    color: #ffffff;
+    border-color: darkgreen;
+}
+.accept-answer{
+    border: 1px solid;
+    border-radius: 25px;
+    padding: 3px;
+    margin: 2px;
+}
+.user .title{
+    font-size: 30px;
+    margin: 10px auto;
+}
+.user-contrib{
+    display: flex;
+    justify-content: space-around;
+    text-align: center;
+    border-bottom: 1px solid #bca298;
+}
+.sort{
+    text-align: right;
+    margin: 10px auto;
+}
+.sort a{
+    border: 1px solid ;
+    padding: 5px 15px;
+}
+.tabs{
+    margin: 5px auto;
+}
+.tabs a{
+    border: 1px solid ;
+    padding: 2px 25px;
+    font-size: 13px;
+    color: #088200
+}
+.tabs a.active{
+    color: #ffffff;
+    background: #088200;
+    border-color: #088200;
+}
+.sort a.active{
+    color: #ffffff;
+    background: #7b0b0b;
+    border-color: #7b0b0b;
+}
+.answer.my3{
+    margin: 20px auto;
+    padding: 10px;
+}
+.votes .voted{
+    color: #088200;
+}

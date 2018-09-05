@@ -32,9 +32,9 @@ class User {
 
   static find(id, callback) {
     const isEmail = Number.isNaN(parseInt(id, 10));
-    const where = isEmail ? 'LOWER(email) = LOWER($1)' : 'id = $1';
+    const where = isEmail ? 'LOWER(users.email) = LOWER($1)' : 'users.id = $1';
     const getQuery = {
-      text: `SELECT * FROM users WHERE ${where}`,
+      text: `SELECT users.*, (SELECT COUNT(questions.id) FROM questions WHERE questions.user_id = users.id) AS question_count, (SELECT COUNT(answers.id) FROM answers WHERE answers.user_id = users.id) AS answer_count FROM users WHERE ${where} GROUP BY users.id`,
       values: [`${id}`],
     };
 
@@ -78,12 +78,12 @@ class User {
       values.push(aUser.name);
     }
     if (aUser.email) {
-      set = `email = $${i += 1}`;
+      set = `${set === '' ? '' : ','} email = $${i += 1}`;
       values.push(aUser.email);
     }
     if (aUser.password) {
       password = bcrypt.hashSync(aUser.password, 10);
-      set = `password = $${i += 1}`;
+      set = `${set === '' ? '' : ','} password = $${i += 1}`;
       values.push(password);
     }
     values.push(id);
