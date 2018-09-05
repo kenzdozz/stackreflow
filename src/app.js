@@ -22,6 +22,7 @@ const apiRouter = express.Router();
 app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
+app.use(express.static(path.join(__dirname + '/public')));
 
 app.use((req, res, next) => {
   res.locals.user = {};
@@ -54,9 +55,6 @@ questionRoutes(apiRouter);
 answerRoutes(apiRouter);
 
 // viewed at http://localhost:8080
-app.get('/', function(req, res) {
-    res.sendFile(path.join(__dirname + '/index.html'));
-});
 app.listen(3033);
 
 export default app;
