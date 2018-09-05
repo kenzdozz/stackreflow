@@ -3,7 +3,6 @@ function fetchCall(url, method, data, callback) {
     let config = {
         method,
         mode: 'cors',
-        dataType: "json",
         headers: {
             "Content-Type": "application/json; charset=utf-8",
             'x-access-token': localStorage.getItem('userToken'),
