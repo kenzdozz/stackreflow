@@ -40,7 +40,9 @@ app.use((req, res, next) => {
   });
 });
 
-Vote.createTable(() => {});
+Vote.createTable((data) => {
+  console.log(data);
+});
 User.createTable(() => { });
 Question.createTable(() => { });
 Answer.createTable(() => { });
