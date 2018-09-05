@@ -1,10 +1,13 @@
-const BaseUrl = 'https://stackreflow.herokuapp.com';
+function isLocal(){
+    return (location.hostname === "localhost" || location.hostname === "127.0.0.1")
+}
+const BaseUrl = isLocal() ? 'http://localhost:5000' : 'https://stackreflow.herokuapp.com';
 
 function fetchCall(url, method, data, callback) {
     let config = {
         method,
         mode: 'cors',
-        // dataType: "json",
+        dataType: "json",
         headers: {
             "Content-Type": "application/json; charset=utf-8",
             'x-access-token': localStorage.getItem('userToken'),

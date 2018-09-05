@@ -95,7 +95,6 @@ function getQuestion(req, res) {
 
 function getQuestions(req, res) {
   return Question.findAll((data) => {
-    console.log(data);
     if (!data.status) {
       return res.status(code.serverError).json({ status: false, errors: errMsg.serverError });
     }

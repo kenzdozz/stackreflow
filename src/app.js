@@ -2,6 +2,7 @@ import express from 'express';
 import bodyParser from 'body-parser';
 import cors from 'cors';
 import jwt from 'jsonwebtoken';
+import path from 'path';
 import registerRoutes from './Controller/Register';
 import userRoutes from './Controller/User';
 import loginRoutes from './Controller/Login';
@@ -12,15 +13,12 @@ import User from './Model/User';
 import Question from './Model/Question';
 import Answer from './Model/Answer';
 import Vote from './Model/Vote';
-import path from 'path';
 
 
 User.createTable(() => {
   Question.createTable(() => {
     Answer.createTable(() => {
-      Vote.createTable((data) => {
-        console.log(data);
-      });
+      Vote.createTable(() => {});
     });
   });
 });
@@ -31,7 +29,7 @@ const apiRouter = express.Router();
 app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
-app.use(express.static(path.join(__dirname + '/../public')));
+app.use(express.static(path.join(`${__dirname}/../public`)));
 
 app.use((req, res, next) => {
   res.locals.user = {};
@@ -51,8 +49,6 @@ app.use((req, res, next) => {
   });
 });
 
-console.log(process.env.NODE_ENV);
-
 app.use('/api/v1', apiRouter);
 registerRoutes(apiRouter);
 userRoutes(apiRouter);
@@ -60,8 +56,6 @@ loginRoutes(apiRouter);
 questionRoutes(apiRouter);
 answerRoutes(apiRouter);
 
-app.listen(process.env.PORT || 5000, () => {
-  console.log('Running now');
-});
+app.listen(process.env.PORT || 5000);
 
 export default app;

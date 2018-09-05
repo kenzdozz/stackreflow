@@ -37,7 +37,7 @@
                 <a class="btn success mb1 fr" href="ask.html">Ask Question</a>
                 <h1 class="mt0">Questions</h1>
                 <div class="questions">
-                    <div id="q1" class="question">
+                    <!-- <div id="q1" class="question">
                         <div class="votes">
                             <span class="mini-count">0</span>
                             <span> views</span>
@@ -55,7 +55,7 @@
                                 <a class="author" href="#">KenzDozz</a>
                             </div>
                         </div>
-                    </div>
+                    </div> -->
                     <!-- <div id="q1" class="question">
                         <div class="votes">
                             <span class="mini-count">0</span>
@@ -133,11 +133,16 @@
 
             const url = `${BaseUrl}/api/v1/questions`;
             fetchCall(url, 'GET', null, (err, response) => {
+                console.log(err)
+                console.log(url)
                 if (err) return handleBtn(false);handleBtn(response.authCheck);
                 if (!response.status) {
                     return;
                 }
                 let questions = '';
+                if (!response.questions.length){
+                    return questionsDiv.innerHTML = '<h2>Be the first to ask a question.</h2>';
+                }
                 response.questions.forEach(question => {
                     questions += `
                         <div id="q${question.id}" class="question">

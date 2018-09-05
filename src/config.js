@@ -1,4 +1,17 @@
 const jwtSecret = 'stackreflowing';
+const prodDb = {
+  connectionString: 'postgres://diabpyfbimjuya:c50f60c6ad2f56d26aa449bc5814a3323d4a6e32e544ce26619a4f9868618e18@ec2-54-227-244-12.compute-1.amazonaws.com:5432/d233ill936cr99',
+  ssl: true,
+};
+const devDb = {
+  user: 'kenzdozz',
+  host: 'localhost',
+  database: 'stackreflow',
+  password: 'chidozie',
+  port: 5432,
+};
+const dbConnObj = process.env.NODE_ENV ? prodDb : devDb;
+
 const code = {
   unAuthorized: 401,
   notFound: 404,
@@ -76,7 +89,8 @@ function timeAgo(aTime) {
 
 
   let format;
-  while (timeFormats[i += 1]) {
+  while (timeFormats[i]) {
+    i += 1;
     format = timeFormats[i];
     if (seconds < format[0]) {
       if (typeof format[2] === 'string') return format[listChoice];
@@ -87,5 +101,5 @@ function timeAgo(aTime) {
 }
 
 export {
-  jwtSecret, code, errMsg, timeAgo,
+  jwtSecret, dbConnObj, code, errMsg, timeAgo,
 };
