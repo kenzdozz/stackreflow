@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Stackreflow</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" media="screen" href="./css/main.css" />
+    <link rel="stylesheet" type="text/css" media="screen" href="./css/font-awesome.min.css" />
+    <!-- <script src="main.js"></script> -->
+</head>
+
+<body>
+    <header>
+        <div id="loadBar"></div>
+        <div class="container header">
+            <div class="logo-div">
+                <a href="index.html"><img src="./logo.png" class="logo"></a>
+            </div>
+            <form method="GET" action="search.html" class="search-form">
+                <input type="text" placeholder="Search..." name="search">
+                <button type="submit"><i class="fa fa-search"></i></button>
+            </form>
+            <span class="search-toggle"><i class="fa fa-search"></i></span>
+            <div class="nav">
+                <a class="login hide" href="login.html">Login</a>
+                <a class="signup hide" href="signup.html">Sign up</a>
+            </div>
+        </div>
+    </header>
+
+    <div class="wrapper">
+        <span class="nav-toggle hide"><i class="fa fa-bars"></i></span>
+        <div class="container d-row">
+            <div class="sidebar-right">
+                <ul>
+                    <li><a href="/">Home</a></li>
+                    <li><a href="users.html">Users</a></li>
+                </ul>
+                <p>Stackoverflow lite. For Andela challenge</p>
+                <p>&copy; 2018 <a href="https://github.com/kenzdozz">KENZiE</a></p>
+            </div>
+            <div class="content">
+                <a class="btn success mb1 fr" href="ask.html">Ask Question</a>
+                <h3 class="mt0 search-title"></h3>
+                <div class="questions">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+
+        <div class="footer"></div>
+    </footer>
+
+    <script src="./js/functions.js"></script>
+    <script>
+        window.onload = () => {
+            document.querySelector('.search-title').innerHTML = `Search results for: ${getParameterByName('search')}`;
+            let loader = '<div class="loader"><i class="fa fa-spinner fa-spin"></i></div>';
+
+            const questionsDiv = document.querySelector('.questions');
+            questionsDiv.innerHTML = loader;
+
+            const url = `${BaseUrl}/api/v1/questions?search=${getParameterByName('search')}`;
+            fetchCall(url, 'GET', null, (err, response) => {
+                if (err) return handleBtn(false);handleBtn(response.authCheck);
+                if (!response.status) {
+                    return;
+                }
+                let questions = '';
+                if (!response.questions.length){
+                    return questionsDiv.innerHTML = '<h2>Be the first to ask a question.</h2>';
+                }
+                response.questions.forEach(question => {
+                    questions += `
+                        <div id="q${question.id}" class="question">
+                        <div class="votes">
+                            <span class="mini-count">${question.view_count}</span>
+                            <span> views</span>
+                        </div>
+                        <div class="answers">
+                            <span class="mini-count">${question.answer_count}</span>
+                            <span> answers</span>
+                        </div>`;
+                    questions += `<div class="summary">
+                            <h4><a href="question.html?id=${question.id}">${question.title}</a></h4>
+                            <div class="tags">${question.tags != 'undefined' ? question.tags : ''}</div>
+                            <div class="authored">
+                                <span class="time">${question.created} </span> 
+                                <a class="author" href="user.html?id=${question.user_id}">${question.username}</a>
+                            </div>
+                        </div>
+                    </div>`;
+                });
+                questionsDiv.innerHTML = questions;
+            });
+        }
+    </script>
+
+</body>
+
+</html>
