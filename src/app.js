@@ -29,7 +29,7 @@ const apiRouter = express.Router();
 app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
-app.use(express.static(path.join(`${__dirname}/../public`)));
+app.use(express.static(path.join(`${__dirname}/../UI`)));
 
 app.use((req, res, next) => {
   res.locals.user = {};
