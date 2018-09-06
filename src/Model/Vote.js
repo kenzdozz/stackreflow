@@ -80,34 +80,34 @@ class Vote {
     });
   }
 
-  static findAll(callback) {
-    const getQuery = 'SELECT votes.*, users.name AS username FROM votes LEFT JOIN users ON users.id = votes.user_id ORDER BY created_at';
+  // static findAll(callback) {
+  //   const getQuery = 'SELECT votes.*, users.name AS username FROM votes LEFT JOIN users ON users.id = votes.user_id ORDER BY created_at';
 
-    pool.connect((error, client, done) => {
-      if (error) return callback({ status: false, message: error.stack });
-      return client.query(getQuery, (err, res) => {
-        done();
-        if (err) return callback({ status: false, messages: err.stack });
-        return callback({ status: true, votes: res.rows });
-      });
-    });
-  }
+  //   pool.connect((error, client, done) => {
+  //     if (error) return callback({ status: false, message: error.stack });
+  //     return client.query(getQuery, (err, res) => {
+  //       done();
+  //       if (err) return callback({ status: false, messages: err.stack });
+  //       return callback({ status: true, votes: res.rows });
+  //     });
+  //   });
+  // }
 
-  static findForAnswer(id, callback) {
-    const getQuery = {
-      text: 'SELECT votes.*, users.name AS username FROM votes LEFT JOIN users ON users.id = votes.user_id WHERE answer_id = $1',
-      values: [`${id}`],
-    };
+  // static findForAnswer(id, callback) {
+  //   const getQuery = {
+  //     text: 'SELECT votes.*, users.name AS username FROM votes LEFT JOIN users ON users.id = votes.user_id WHERE answer_id = $1',
+  //     values: [`${id}`],
+  //   };
 
-    pool.connect((error, client, done) => {
-      if (error) return callback({ status: false, message: error.stack });
-      return client.query(getQuery, (err, res) => {
-        done();
-        if (err) return callback({ status: false, messages: err.stack });
-        return callback({ status: true, votes: res.rows });
-      });
-    });
-  }
+  //   pool.connect((error, client, done) => {
+  //     if (error) return callback({ status: false, message: error.stack });
+  //     return client.query(getQuery, (err, res) => {
+  //       done();
+  //       if (err) return callback({ status: false, messages: err.stack });
+  //       return callback({ status: true, votes: res.rows });
+  //     });
+  //   });
+  // }
 
   static delete(id, callback) {
     const getQuery = {

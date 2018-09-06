@@ -7,7 +7,7 @@
     "test": "babel src/ -d lib/ && mocha lib/test/ --exit",
     "build": "babel src -d lib",
     "start": "npm run build && node lib/app",
-    "coverage": "nyc report --reporter=text-lcov --reporter=lcov | coveralls"
+    "coveralls": "nyc npm test && nyc report --reporter=text-lcov | coveralls"
   },
   "keywords": [
     "andela",
