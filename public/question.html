@@ -15,12 +15,14 @@
     <header>
         <div id="loadBar"></div>
         <div class="container header">
-            <div>
-                <a href="index.html"><img src="./stack.png" class="logo"></a>
+            <div class="logo-div">
+                <a href="index.html"><img src="./logo.png" class="logo"></a>
             </div>
-            <form class="search-form">
+            <form method="GET" action="search.html" class="search-form">
                 <input type="text" placeholder="Search..." name="search">
+                <button type="submit"><i class="fa fa-search"></i></button>
             </form>
+            <span class="search-toggle"><i class="fa fa-search"></i></span>
             <div class="nav">
                 <a class="login hide" href="login.html">Login</a>
                 <a class="signup hide" href="signup.html">Sign up</a>
@@ -29,9 +31,15 @@
     </header>
 
     <div class="wrapper">
+        <span class="nav-toggle hide"><i class="fa fa-bars"></i></span>
         <div class="container d-row">
             <div class="sidebar-right">
-
+                <ul>
+                    <li><a href="/">Home</a></li>
+                    <li><a href="users.html">Users</a></li>
+                </ul>
+                <p>Stackoverflow lite. For Andela challenge</p>
+                <p>&copy; 2018 <a href="https://github.com/kenzdozz">KENZiE</a></p>
             </div>
             <div class="content">
                 <a class="btn success mb1 fr" href="ask.html">Ask Question</a>
@@ -205,6 +213,9 @@
             fetchCall(url, 'POST', question, (err, response) => {
                 if (err) return submitBtn.removeChild(loader);
 
+                if (response.errors === 'Unauthorized Access - invalid or no token') {
+                    return location.href = 'login.html';
+                }
                 if (!response.status) {
                     for (var key in response.errors) {
                         document.querySelector('.input-error.' + key).innerHTML = response.errors[key];
@@ -297,7 +308,7 @@
                     if (removeVote) anchor.classList.add('voted');
                     else if (action === 1) {
                         anchor.classList.remove('voted');
-                        addCount =removeVote ? 1 : -1;
+                        addCount = removeVote ? 1 : -1;
                         if (removed) {
                             dVote.classList.add('voted');
                             addCount = -2;

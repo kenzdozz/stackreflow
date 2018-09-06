@@ -94,6 +94,23 @@ function getQuestion(req, res) {
 }
 
 function getQuestions(req, res) {
+  const searchStr = req.query.search;
+  if (searchStr){
+    return Question.search(searchStr, (data) => {
+      if (!data.status) {
+        return res.status(code.serverError).json({ status: false, errors: errMsg.serverError });
+      }
+      const resData = data;
+      resData.authCheck = res.locals.authCheck;
+      let question = null;
+      resData.questions.forEach((aQuestion) => {
+        question = aQuestion;
+        question.created = timeAgo(question.created_at);
+        question.manage = question.user_id === res.locals.user.id;
+      });
+      return res.status(code.ok).json(resData);
+    });
+  }
   return Question.findAll((data) => {
     if (!data.status) {
       return res.status(code.serverError).json({ status: false, errors: errMsg.serverError });

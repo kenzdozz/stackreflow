@@ -15,23 +15,31 @@
     <header>
         <div id="loadBar"></div>
         <div class="container header">
-            <div>
-                <a href="index.html"><img src="./stack.png" class="logo"></a>
+            <div class="logo-div">
+                <a href="index.html"><img src="./logo.png" class="logo"></a>
             </div>
-            <form class="search-form">
+            <form method="GET" action="search.html" class="search-form">
                 <input type="text" placeholder="Search..." name="search">
+                <button type="submit"><i class="fa fa-search"></i></button>
             </form>
+            <span class="search-toggle"><i class="fa fa-search"></i></span>
             <div class="nav">
-                <a class="login hide" href="user.html">My Account</a>
-                <a class="signup hide" href="logout.html">Logout</a>
+                <a class="login hide" href="login.html">Login</a>
+                <a class="signup hide" href="signup.html">Sign up</a>
             </div>
         </div>
     </header>
 
     <div class="wrapper">
+        <span class="nav-toggle hide"><i class="fa fa-bars"></i></span>
         <div class="container d-row">
             <div class="sidebar-right">
-
+                <ul>
+                    <li><a href="/">Home</a></li>
+                    <li><a href="users.html">Users</a></li>
+                </ul>
+                <p>Stackoverflow lite. For Andela challenge</p>
+                <p>&copy; 2018 <a href="https://github.com/kenzdozz">KENZiE</a></p>
             </div>
             <div class="content">
                 <div class="user">
@@ -164,12 +172,9 @@
 
             fetchCall(url, 'GET', null, (error, response) => {
                 if (error) {
-                    questionsDiv.innerHTML = '<h2>An error has been encountered.</h2>';
-                    console.log(error);
-                    return handleBtn(false);
+                    return questionsDiv.innerHTML = '<h2>An error has been encountered.</h2>';
                 }
 
-                handleBtn(response.authCheck);
                 if (!response.status) {
                     document.querySelector('.answer').remove();
                     questionsDiv.innerHTML = '<h2>Questions Not Found</h2>';

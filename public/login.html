@@ -16,7 +16,7 @@
         <div class="auth-wrapper">
             <div>
                 <a href="index.html">
-                    <img src="./stack.png" class="logo">
+                    <img src="./logo.png" class="logo">
                 </a>
             </div>
             <h2>Login</h2>
@@ -58,6 +58,7 @@
                     return loginBtn.removeChild(loader);
                 }
                 localStorage.setItem('userToken', response.token);
+                localStorage.setItem('userId', response.user.id);
                 location.href = 'index.html';
             })
         }

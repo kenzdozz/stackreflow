@@ -8,31 +8,44 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" type="text/css" media="screen" href="./css/main.css" />
     <link rel="stylesheet" type="text/css" media="screen" href="./css/font-awesome.min.css" />
+    <script>
+        if(!localStorage.getItem('userId')){
+            location.href = 'login.html';
+        }
+    </script>
     <!-- <script src="main.js"></script> -->
 </head>
 
 <body>
-    <header>
-        <div id="loadBar"></div>
-        <div class="container header">
-            <div>
-                <a href="index.html"><img src="./stack.png" class="logo"></a>
+        <header>
+            <div id="loadBar"></div>
+            <div class="container header">
+                <div class="logo-div">
+                    <a href="index.html"><img src="./logo.png" class="logo"></a>
+                </div>
+                <form method="GET" action="search.html" class="search-form">
+                    <input type="text" placeholder="Search..." name="search">
+                    <button type="submit"><i class="fa fa-search"></i></button>
+                </form>
+                <span class="search-toggle"><i class="fa fa-search"></i></span>
+                <div class="nav">
+                    <a class="login hide" href="login.html">Login</a>
+                    <a class="signup hide" href="signup.html">Sign up</a>
+                </div>
             </div>
-            <form class="search-form">
-                <input type="text" placeholder="Search..." name="search">
-            </form>
-            <div class="nav">
-                <a class="login hide" href="/user.html">My Account</a>
-                <a class="signup hide" href="/logout.html">Logout</a>
-            </div>
-        </div>
-    </header>
-
-    <div class="wrapper">
-        <div class="container d-row">
-            <div class="sidebar-right">
-
-            </div>
+        </header>
+    
+        <div class="wrapper">
+            <span class="nav-toggle hide"><i class="fa fa-bars"></i></span>
+            <div class="container d-row">
+                <div class="sidebar-right">
+                    <ul>
+                        <li><a href="/">Home</a></li>
+                        <li><a href="users.html">Users</a></li>
+                    </ul>
+                    <p>Stackoverflow lite. For Andela challenge</p>
+                    <p>&copy; 2018 <a href="https://github.com/kenzdozz">KENZiE</a></p>
+                </div>
             <div class="content">
                 <h1 class="mt0">Ask a question</h1>
                 <div class="ask">
@@ -45,6 +58,7 @@
                         <p class="input-error body"></p>
                         <label>Tags</label>
                         <input type="text" name="tags" placeholder="Tags (Separate with comma)" class="control">
+                        <p class="input-error auth"></p>
                         <button type="submit" class="mt2 btn auth">Submit </button>
                     </form>
                 </div>
@@ -59,6 +73,7 @@
 
     <script src="./js/functions.js"></script>
     <script>
+        handleBtn();
         document.querySelector('#askQuestion').onsubmit = function (event) {
             event.preventDefault();
             const form = this;
@@ -75,8 +90,12 @@
 
             const url = `${BaseUrl}/api/v1/questions`;
             fetchCall(url, 'POST', question, (error, response) => {
+                console.log(response);
                 if (error) return submitBtn.removeChild(loader);
                 if (!response.status) {
+                    if (response.errors === 'Unauthorized Access - invalid or no token'){
+                        return location.href = 'login.html';
+                    }
                     for (var key in response.errors) {
                         document.querySelector('.input-error.' + key).innerHTML = response.errors[key];
                     }

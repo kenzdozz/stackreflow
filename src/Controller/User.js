@@ -50,9 +50,11 @@ function getUsers(req, res) {
     if (!data.status) {
       return res.status(code.serverError).json({ status: false, errors: errMsg.serverError });
     }
-    if (data.users.length < 1) {
-      return res.status(code.notFound).json({ status: false, errors: 'There are no users' });
-    }
+    let user = null;
+    data.users.forEach((aUser) => {
+      user = aUser;
+      delete user.password;
+    });
     return res.status(code.ok).json(data);
   });
 }

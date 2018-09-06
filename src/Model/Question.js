@@ -141,6 +141,22 @@ class Question {
     });
   }
 
+  static search(text, callback) {
+    const getQuery = {
+      text: `SELECT questions.*, users.name AS username FROM questions LEFT JOIN users ON users.id = questions.user_id WHERE LOWER(questions.title) LIKE LOWER($1) ORDER BY questions.created_at DESC`,
+      values: [`%${text}%`],
+    }
+
+    pool.connect((error, client, done) => {
+      if (error) return callback({ status: false, message: error.stack });
+      return client.query(getQuery, (err, res) => {
+        done();
+        if (err) return callback({ status: false, messages: err.stack });
+        return callback({ status: true, questions: res.rows });
+      });
+    });
+  }
+
   static delete(id, callback) {
     const getQuery = {
       text: 'DELETE FROM questions WHERE id = $1',
