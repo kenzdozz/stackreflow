@@ -23,5 +23,7 @@ answer.
 
 ## Deployment
 This app is deployed on Heroku ::: https://stackreflow.herokuapp.com/v1/api
-This app UI consuming the API is on (Heroku - StackReflow)[https://stackreflow.herokuapp.com]
-Documentation for the API is on (StackReflow Docs)[https://stackreflow.herokuapp.com]
+
+This app UI consuming the API is on [Heroku - StackReflow](https://stackreflow.herokuapp.com)
+
+Documentation for the API is on [StackReflow Docs](https://stackreflow.herokuapp.com)
