@@ -49,6 +49,10 @@ app.use((req, res, next) => {
   });
 });
 
+app.use('/api/docs', (req, res, next) => {
+  return res.sendFile(path.join(`${__dirname}/../UI/docs.html`));
+});
+
 app.use('/api/v1', apiRouter);
 registerRoutes(apiRouter);
 userRoutes(apiRouter);
