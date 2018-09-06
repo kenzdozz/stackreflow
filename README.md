@@ -23,7 +23,24 @@ answer.
 
 ## Deployment
 This app is deployed on Heroku ::: https://stackreflow.herokuapp.com/v1/api
-
 This app UI consuming the API is on [Heroku - StackReflow](https://stackreflow.herokuapp.com)
-
 Documentation for the API is on [StackReflow Docs](https://stackreflow.herokuapp.com)
+
+## Technology used
+[Node js](https://nodejs.org/en/)
+[Express](https://expressjs.com/)
+[Postgres](https://www.postgresql.org)
+
+## Installation
+Requires [Node js](https://nodejs.org/en/), Version 8 or higher
+
+Then clone the repository or download and uncompress:
+
+`git clone https://github.com/fejroofficial/stackOverflow-lite.git`
+
+Start the App by running:
+
+`npm start`
+
+##Acknoledgement
+* This is an Andela Developer Challenge, Thanks to [Andela](https://andela.com).
