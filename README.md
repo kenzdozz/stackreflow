@@ -35,7 +35,7 @@ Requires [Node js](https://nodejs.org/en/), Version 8 or higher
 
 Then clone the repository or download and uncompress:
 
-`git clone https://github.com/fejroofficial/stackOverflow-lite.git`
+`git clone https://github.com/kenzdozz/stackreflow.git`
 
 Start the App by running:
 
