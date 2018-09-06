@@ -64,6 +64,14 @@ describe('Question', () => {
           done();
         });
     });
+    it('Should get search questions', (done) => {
+      chai.request(app).get('/api/v1/questions?search=test')
+        .end((err, res) => {
+          expect(res.statusCode, 'Should be 200').to.equal(200);
+          expect(res.body.questions, 'Should return array').to.be.a('array');
+          done();
+        });
+    });
   });
 
   describe('POST /questions', () => {

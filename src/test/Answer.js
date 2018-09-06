@@ -86,4 +86,37 @@ describe('Answer', () => {
         });
     });
   });
+
+  describe('PUT /questions/:questionId/answers/:answerId/upvote', () => {
+    it('Should upvote an answer to a question', (done) => {
+      chai.request(app).put(`/api/v1/questions/${question.id}/answers/${answerId}/upvote`)
+        .send({ token }).end((err, res) => {
+          expect(res.statusCode, 'Should be 200').to.equal(200);
+          expect(res.body, 'Should return object').to.be.a('object');
+          done();
+        });
+    });
+  });
+
+  describe('PUT /questions/:questionId/answers/:answerId/downvote', () => {
+    it('Should downvote an answer to a question', (done) => {
+      chai.request(app).put(`/api/v1/questions/${question.id}/answers/${answerId}/downvote`)
+        .send({ token }).end((err, res) => {
+          expect(res.statusCode, 'Should be 200').to.equal(200);
+          expect(res.body, 'Should return object').to.be.a('object');
+          done();
+        });
+    });
+  });
+
+  describe('DELETE /questions/:questionId/answers/:answerId', () => {
+    it('Should delete an answer to a question', (done) => {
+      chai.request(app).delete(`/api/v1/questions/${question.id}/answers/${answerId}`)
+        .send({ token }).end((err, res) => {
+          expect(res.statusCode, 'Should be 200').to.equal(200);
+          expect(res.body, 'Should return object').to.be.a('object');
+          done();
+        });
+    });
+  });
 });

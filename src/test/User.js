@@ -50,11 +50,30 @@ describe('Users', () => {
   });
 
   describe('GET /users/:userId', () => {
-    it('Should get one user', (done) => {
+    it('Should get one user with questions', (done) => {
       chai.request(app).get(`/api/v1/users/${user.id}`).send({ token })
         .end((errr, res) => {
           expect(res.statusCode, 'Should be 200').to.equal(200);
           expect(res.body.user, 'Should return object').to.be.a('object');
+          expect(res.body.user.questions, 'Should return array').to.be.a('array');
+          done();
+        });
+    });
+    it('Should get one user and sort questions by most response', (done) => {
+      chai.request(app).get(`/api/v1/users/${user.id}?sort=top`).send({ token })
+        .end((errr, res) => {
+          expect(res.statusCode, 'Should be 200').to.equal(200);
+          expect(res.body.user, 'Should return object').to.be.a('object');
+          expect(res.body.user.questions, 'Should return array').to.be.a('array');
+          done();
+        });
+    });
+    it('Should get one user and questions user has given answer to', (done) => {
+      chai.request(app).get(`/api/v1/users/${user.id}?type=answers`).send({ token })
+        .end((errr, res) => {
+          expect(res.statusCode, 'Should be 200').to.equal(200);
+          expect(res.body.user, 'Should return object').to.be.a('object');
+          expect(res.body.user.questions, 'Should return array').to.be.a('array');
           done();
         });
     });
