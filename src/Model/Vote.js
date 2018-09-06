@@ -125,16 +125,16 @@ class Vote {
     });
   }
 
-  static empty(callback) {
-    const emptyQuery = 'DELETE FROM votes';
-    pool.connect((error, client, done) => {
-      if (error) return callback(error);
-      return client.query(emptyQuery, (err) => {
-        done();
-        return callback(err);
-      });
-    });
-  }
+  // static empty(callback) {
+  //   const emptyQuery = 'DELETE FROM votes';
+  //   pool.connect((error, client, done) => {
+  //     if (error) return callback(error);
+  //     return client.query(emptyQuery, (err) => {
+  //       done();
+  //       return callback(err);
+  //     });
+  //   });
+  // }
 }
 
 export default Vote;
