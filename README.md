@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/kenzdozz/stackreflow.svg?branch=master)](https://travis-ci.org/kenzdozz/stackreflow) [![Coverage Status](https://coveralls.io/repos/github/kenzdozz/stackreflow/badge.svg?branch=develop)](https://coveralls.io/github/kenzdozz/stackreflow?branch=develop)
+[![Build Status](https://travis-ci.org/kenzdozz/stackreflow.svg?branch=master)](https://travis-ci.org/kenzdozz/stackreflow) 
 
 # Stackreflow
 
