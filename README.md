@@ -24,6 +24,7 @@ And view profile to see summary of activities on the platform.
 * This app is deployed on Heroku ::: https://stackreflow.herokuapp.com/v1/api
 * This app UI consuming the API is on [Heroku - StackReflow](https://stackreflow.herokuapp.com)
 * Documentation for the API is on [StackReflow Docs](https://stackreflow.herokuapp.com)
+* Documentation on [Apiary.io](https://stackreflow.docs.apiary.io)
 
 ## Technology used
 [Node js](https://nodejs.org/en/)
