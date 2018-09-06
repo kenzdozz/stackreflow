@@ -40,6 +40,7 @@ Then clone the repository or download and uncompress:
 
 Start the App by running:
 
+`npm install`
 `npm start`
 
 ## Acknoledgement
