@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Stackreflow</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" media="screen" href="./css/main.css" />
+    <link rel="stylesheet" type="text/css" media="screen" href="./css/font-awesome.min.css" />
+    <script>
+        if(!localStorage.getItem('userId')){
+            location.href = 'login.html';
+        }
+    </script>
+    <!-- <script src="main.js"></script> -->
+</head>
+
+<body>
+        <header>
+            <div id="loadBar"></div>
+            <div class="container header">
+                <div class="logo-div">
+                    <a href="index.html"><img src="./logo.png" class="logo"></a>
+                </div>
+                <form method="GET" action="search.html" class="search-form">
+                    <input type="text" placeholder="Search..." name="search">
+                    <button type="submit"><i class="fa fa-search"></i></button>
+                </form>
+                <span class="search-toggle"><i class="fa fa-search"></i></span>
+                <div class="nav">
+                    <a class="login hide" href="login.html">Login</a>
+                    <a class="signup hide" href="signup.html">Sign up</a>
+                </div>
+            </div>
+        </header>
+    
+        <div class="wrapper">
+            <span class="nav-toggle hide"><i class="fa fa-bars"></i></span>
+            <div class="container d-row">
+                <div class="sidebar-right">
+                    <ul>
+                        <li><a href="/">Home</a></li>
+                        <li><a href="users.html">Users</a></li>
+                    </ul>
+                    <p>Stackoverflow lite. For Andela challenge</p>
+                    <p>&copy; 2018 <a href="https://github.com/kenzdozz">KENZiE</a></p>
+                </div>
+            <div class="content">
+                <h1 class="mt0">Ask a question</h1>
+                <div class="ask">
+                    <form id="askQuestion" method="POST" action="">
+                        <label>Question Title</label>
+                        <input type="text" name="title" placeholder="Title" class="control">
+                        <p class="input-error title"></p>
+                        <label>Description</label>
+                        <textarea placeholder="Body" name="body" class="control"></textarea>
+                        <p class="input-error body"></p>
+                        <label>Tags</label>
+                        <input type="text" name="tags" placeholder="Tags (Separate with comma)" class="control">
+                        <p class="input-error auth"></p>
+                        <button type="submit" class="mt2 btn auth">Submit </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+
+        <div class="footer"></div>
+    </footer>
+
+    <script src="./js/functions.js"></script>
+    <script>
+        handleBtn();
+        document.querySelector('#askQuestion').onsubmit = function (event) {
+            event.preventDefault();
+            const form = this;
+            const question = {
+                title: form.querySelector('input[name=title]').value,
+                body: form.querySelector('textarea[name=body]').value,
+                tags: form.querySelector('input[name=tags]').value,
+            }
+            const loader = document.createElement('i');
+            loader.setAttribute('class', 'fa fa-spinner fa-spin');
+            const submitBtn = form.querySelector('button');
+            if (submitBtn.childNodes.length === 1) submitBtn.appendChild(loader);
+            form.querySelectorAll('.input-error').forEach(input => input.innerHTML = '');
+
+            const url = `${BaseUrl}/api/v1/questions`;
+            fetchCall(url, 'POST', question, (error, response) => {
+                console.log(response);
+                if (error) return submitBtn.removeChild(loader);
+                if (!response.status) {
+                    if (response.errors === 'Unauthorized Access - invalid or no token'){
+                        return location.href = 'login.html';
+                    }
+                    for (var key in response.errors) {
+                        document.querySelector('.input-error.' + key).innerHTML = response.errors[key];
+                    }
+                    return submitBtn.removeChild(loader);
+                }
+                location.href = 'question.html?id=' + response.question.id;
+                submitBtn.removeChild(loader);
+            })
+        }
+    </script>
+
+</body>
+
+</html>

@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Stackreflow</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" media="screen" href="./css/main.css" />
+    <link rel="stylesheet" type="text/css" media="screen" href="./css/font-awesome.min.css" />
+    <!-- <script src="main.js"></script> -->
+</head>
+
+<body>
+    <header>
+        <div id="loadBar"></div>
+        <div class="container header">
+            <div class="logo-div">
+                <a href="index.html"><img src="./logo.png" class="logo"></a>
+            </div>
+            <form method="GET" action="search.html" class="search-form">
+                <input type="text" placeholder="Search..." name="search">
+                <button type="submit"><i class="fa fa-search"></i></button>
+            </form>
+            <span class="search-toggle"><i class="fa fa-search"></i></span>
+            <div class="nav">
+                <a class="login hide" href="login.html">Login</a>
+                <a class="signup hide" href="signup.html">Sign up</a>
+            </div>
+        </div>
+    </header>
+
+    <div class="wrapper">
+        <span class="nav-toggle hide"><i class="fa fa-bars"></i></span>
+        <div class="container d-row">
+            <div class="sidebar-right">
+                <ul>
+                    <li><a href="/">Home</a></li>
+                    <li><a href="users.html">Users</a></li>
+                </ul>
+                <p>Stackoverflow lite. For Andela challenge</p>
+                <p>&copy; 2018 <a href="https://github.com/kenzdozz">KENZiE</a></p>
+            </div>
+            <div class="content">
+                <h1 class="mt0">Users</h1>
+                <div class="users">
+                    <div id="u" class="user">
+                        <a href="user.html?id=1">Kenneth</a>
+                        <p>Contributions</p>
+                        <div>
+                            <span>Q:</span>
+                            <h3>4</h3>
+                        </div>
+                        <div>
+                            <span>A:</span>
+                            <h3>23</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+
+        <div class="footer"></div>
+    </footer>
+
+    <script src="./js/functions.js"></script>
+    <script>
+        let manageQ = null;
+        window.onload = () => {
+            let loader = '<div class="loader"><i class="fa fa-spinner fa-spin"></i></div>';
+
+            const usersDiv = document.querySelector('.users');
+            usersDiv.innerHTML = loader;
+            const url = `${BaseUrl}/api/v1/users`;
+
+            fetchCall(url, 'GET', null, (error, response) => {
+                if (error) {
+                    usersDiv.innerHTML = '<h2>An error has been encountered.</h2>';
+                    console.log(error);
+                    return handleBtn(false);
+                }
+
+                handleBtn(response.authCheck);
+                if (!response.status) {
+                    usersDiv.innerHTML = '<h2>User Not Found</h2>';
+                    return;
+                }
+                const users = response.users;
+
+                let userDiv = '';
+                users.forEach(user => {
+                    
+                userDiv += `<div id="u${user.id}" class="user">
+                        <a href="user.html?id=${user.id}">${user.name}</a>
+                        <p>Contributions</p>
+                        <div>
+                            <span>Q:</span>
+                            <h3>${user.question_count}</h3>
+                        </div>
+                        <div>
+                            <span>A:</span>
+                            <h3>${user.answer_count}</h3>
+                        </div>
+                    </div>`;
+                });
+                usersDiv.innerHTML = userDiv;
+            });
+        }
+
+    </script>
+</body>
+
+</html>

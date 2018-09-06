@@ -23,8 +23,8 @@ class Answer {
           + ' body varchar(3000),'
           + ' accepted boolean DEFAULT false,'
           + ' vote_count integer DEFAULT 0,'
-          + ' created_at date DEFAULT CURRENT_TIMESTAMP,'
-          + ' updated_at date DEFAULT CURRENT_TIMESTAMP );';
+          + ' created_at timestamp DEFAULT CURRENT_TIMESTAMP,'
+          + ' updated_at timestamp DEFAULT CURRENT_TIMESTAMP );';
 
     pool.connect((error, client, done) => {
       if (error) return callback({ status: false, message: error.stack });
@@ -38,11 +38,11 @@ class Answer {
 
   static find(id, callback) {
     let getQuery = {
-      text: 'SELECT * FROM answers WHERE id = $1',
+      text: 'SELECT answers.*, users.name AS username FROM answers LEFT JOIN users ON users.id = answers.user_id WHERE answers.id = $1',
       values: [`${id}`],
     };
 
-    if (!id) getQuery = 'SELECT * FROM answers ORDER BY id DESC LIMIT 1';
+    if (!id) getQuery = 'SELECT answers.*, users.name AS username FROM answers LEFT JOIN users ON users.id = answers.user_id ORDER BY id DESC LIMIT 1';
 
     pool.connect((error, client, done) => {
       if (error) return callback({ status: false, message: error.stack });
@@ -50,6 +50,22 @@ class Answer {
         done();
         if (err) return callback({ status: false, messages: err.stack });
         return callback({ status: true, answer: res.rows[0] });
+      });
+    });
+  }
+
+  static rejectAnswers(id, callback) {
+    const getQuery = {
+      text: 'UPDATE answers SET accepted = false WHERE question_id = $1',
+      values: [`${id}`],
+    };
+
+    pool.connect((error, client, done) => {
+      if (error) return callback({ status: false, message: error.stack });
+      return client.query(getQuery, (err) => {
+        done();
+        if (err) return callback({ status: false, messages: err.stack });
+        return callback({ status: true, answer: {} });
       });
     });
   }
@@ -78,14 +94,11 @@ class Answer {
       set += `body = $${i += 1} `;
       values.push(anAnswer.body);
     }
-    if (anAnswer.accepted) {
-      set += `accepted = $${i += 1} `;
-      values.push(anAnswer.accepted);
-    }
     if (anAnswer.voteCount) {
-      set += `vote_count = $${i += 1} `;
-      values.push(anAnswer.voteCount);
+      set += `${set === '' ? '' : ','} ${anAnswer.voteCount === 1 ? 'vote_count = vote_count + 1 ' : 'vote_count = vote_count - 1 '}`;
     }
+    set += `${set === '' ? '' : ','} accepted = $${i += 1} `;
+    values.push(anAnswer.accepted || false);
     values.push(id);
 
     const updateQuery = {
@@ -104,7 +117,7 @@ class Answer {
   }
 
   static findAll(callback) {
-    const getQuery = 'SELECT * FROM answers ORDER BY created_at';
+    const getQuery = 'SELECT answers.*, users.name AS username FROM answers LEFT JOIN users ON users.id = answers.user_id ORDER BY created_at';
 
     pool.connect((error, client, done) => {
       if (error) return callback({ status: false, message: error.stack });
@@ -118,7 +131,7 @@ class Answer {
 
   static findForQuestion(id, callback) {
     const getQuery = {
-      text: 'SELECT * FROM answers WHERE question_id = $1',
+      text: 'SELECT answers.*, users.name AS username FROM answers LEFT JOIN users ON users.id = answers.user_id WHERE question_id = $1 ORDER BY answers.accepted DESC, answers.created_at ASC',
       values: [`${id}`],
     };
 
@@ -128,6 +141,23 @@ class Answer {
         done();
         if (err) return callback({ status: false, messages: err.stack });
         return callback({ status: true, answers: res.rows });
+      });
+    });
+  }
+
+  static findForUser(id, sort, callback) {
+    const orderBy = sort === 'top' ? ' ORDER BY answer_count DESC ' : ' ORDER BY created_at DESC ';
+    const getQuery = {
+      text: `SELECT answers.id AS answer_id, questions.* FROM answers LEFT JOIN questions ON questions.id = answers.question_id WHERE answers.user_id = $1 ${orderBy}`,
+      values: [`${id}`],
+    };
+
+    pool.connect((error, client, done) => {
+      if (error) return callback({ status: false, message: error.stack });
+      return client.query(getQuery, (err, res) => {
+        done();
+        if (err) return callback({ status: false, messages: err.stack });
+        return callback({ status: true, questions: res.rows });
       });
     });
   }

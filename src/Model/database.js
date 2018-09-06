@@ -1,11 +1,6 @@
 import { Pool } from 'pg';
+import { dbConnObj } from '../config';
 
-const pool = new Pool({
-  user: 'postgres',
-  host: 'localhost',
-  database: 'stackreflow',
-  password: '',
-  port: 5432,
-});
+const pool = new Pool(dbConnObj);
 
 export default pool;

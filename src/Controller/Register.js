@@ -40,7 +40,9 @@ function createUser(req, res) {
     if (data.message === 'duplicate') {
       return res.status(code.conflict).json({ status: false, errors: { email: 'User already exists' } });
     }
-    return res.status(code.ok).json(data);
+    const aUser = data.user;
+    delete aUser.password;
+    return res.status(code.ok).json({ status: true, user: aUser });
   });
 }
 

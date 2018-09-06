@@ -1,6 +1,8 @@
 
-import { code, errMsg } from '../config';
+import { code, errMsg, timeAgo } from '../config';
 import User from '../Model/User';
+import Question from '../Model/Question';
+import Answer from '../Model/Answer';
 
 function getUser(req, res) {
   return User.find(req.params.id, (data) => {
@@ -10,7 +12,36 @@ function getUser(req, res) {
     if (!data.user) {
       return res.status(code.notFound).json({ status: false, errors: 'User not found' });
     }
-    return res.status(code.ok).json(data);
+    const resData = data;
+    delete resData.user.password;
+    const sort = req.query.sort === 'top' ? 'top' : 'new';
+    const type = req.query.type === 'answers' ? 'answers' : 'questions';
+    if (type === 'answers') {
+      return Answer.findForUser(resData.user.id, sort, (data2) => {
+        if (!data2.status) {
+          return res.status(code.serverError).json({ status: false, errors: errMsg.serverError });
+        }
+        let question = null;
+        data2.questions.forEach((aQuestion) => {
+          question = aQuestion;
+          question.created = timeAgo(question.created_at);
+        });
+        resData.user.questions = data2.questions;
+        return res.status(code.ok).json(resData);
+      });
+    }
+    return Question.findForUser(resData.user.id, sort, (data2) => {
+      if (!data2.status) {
+        return res.status(code.serverError).json({ status: false, errors: errMsg.serverError });
+      }
+      let question = null;
+      data2.questions.forEach((aQuestion) => {
+        question = aQuestion;
+        question.created = timeAgo(question.created_at);
+      });
+      resData.user.questions = data2.questions;
+      return res.status(code.ok).json(resData);
+    });
   });
 }
 
@@ -19,9 +50,11 @@ function getUsers(req, res) {
     if (!data.status) {
       return res.status(code.serverError).json({ status: false, errors: errMsg.serverError });
     }
-    if (data.users.length < 1) {
-      return res.status(code.notFound).json({ status: false, errors: 'There are no users' });
-    }
+    let user = null;
+    data.users.forEach((aUser) => {
+      user = aUser;
+      delete user.password;
+    });
     return res.status(code.ok).json(data);
   });
 }

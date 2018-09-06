@@ -10,17 +10,16 @@ import User from '../Model/User';
 const expect = chai.expect;
 chai.use(chaiHttp);
 
-User.createTable(data => { });
-Question.createTable(data => { });
+User.createTable(() => { });
+Question.createTable(() => { });
 
 describe('Question', () => {
-
-  let newQuestion = new Question();
+  const newQuestion = new Question();
   newQuestion.title = 'How can I test this test?';
   newQuestion.body = 'How will I write a test code to test my test codes on nodejs?';
   newQuestion.tags = 'test, test code';
 
-  let newUser = new User();
+  const newUser = new User();
   newUser.name = 'Kenneth';
   newUser.email = 'kenzdozz@gmail.com';
   newUser.password = 'chidozie';
@@ -29,24 +28,23 @@ describe('Question', () => {
   let question = null;
   let token = null;
 
-  beforeEach(function (done) {
-    
+  beforeEach((done) => {
     Question.empty((err) => {
       if (err) throw err;
 
-      User.empty((err) => {
-        if (err) throw err;
+      User.empty((error) => {
+        if (error) throw error;
 
-        newUser.save(data => {
+        newUser.save((data) => {
           user = data.user;
           newQuestion.userId = user.id;
 
-          newQuestion.save(data => {
-            question = data.question;
-            
+          newQuestion.save((data2) => {
+            question = data2.question;
+
             chai.request(app).post('/api/v1/auth/login')
-              .send({ email: 'kenzdozz@gmail.com', password: 'chidozie', })
-              .end((err, res) => {
+              .send({ email: 'kenzdozz@gmail.com', password: 'chidozie' })
+              .end((errr, res) => {
                 token = res.body.token;
                 done();
               });
@@ -66,17 +64,25 @@ describe('Question', () => {
           done();
         });
     });
+    it('Should get search questions', (done) => {
+      chai.request(app).get('/api/v1/questions?search=test')
+        .end((err, res) => {
+          expect(res.statusCode, 'Should be 200').to.equal(200);
+          expect(res.body.questions, 'Should return array').to.be.a('array');
+          done();
+        });
+    });
   });
 
   describe('POST /questions', () => {
     it('Should not post a question without title', (done) => {
-      const question = {
+      const aQuestion = {
         body: 'How will I write a test code to test my test codes on nodejs?',
         tags: 'test, test code',
         user_id: user.id,
-        token: token,
+        token,
       };
-      chai.request(app).post('/api/v1/questions').send(question)
+      chai.request(app).post('/api/v1/questions').send(aQuestion)
         .end((err, res) => {
           expect(res.statusCode, 'Should be 400').to.equal(400);
           expect(res.body, 'Should return object').to.be.a('object');
@@ -86,14 +92,14 @@ describe('Question', () => {
     });
 
     it('Should post a question', (done) => {
-      const question = {
+      const aQuestion = {
         title: 'How can I test another test?',
         body: 'How will I write a test code to test my test codes on nodejs?',
         tags: 'test, test code',
         user_id: user.id,
-        token: token,
+        token,
       };
-      chai.request(app).post('/api/v1/questions').send(question)
+      chai.request(app).post('/api/v1/questions').send(aQuestion)
         .end((err, res) => {
           expect(res.statusCode, 'Should be 200').to.equal(200);
           expect(res.body.question, 'Should return object').to.be.a('object');
@@ -105,7 +111,6 @@ describe('Question', () => {
 
   describe('GET /questions/:questionId', () => {
     it('Should get a question', (done) => {
-
       chai.request(app).get(`/api/v1/questions/${question.id}`)
         .end((err, res) => {
           expect(res.statusCode, 'Should be 200').to.equal(200);
@@ -128,7 +133,7 @@ describe('Question', () => {
   describe('DELETE /questions/:questionId', () => {
     it('Should delete a question', (done) => {
       chai.request(app).delete(`/api/v1/questions/${question.id}`)
-        .send({ token: token })
+        .send({ token })
         .end((err, res) => {
           expect(res.statusCode, 'Should be 200').to.equal(200);
           expect(res.body.question, 'Should return object').to.be.a('object');

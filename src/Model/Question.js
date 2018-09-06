@@ -20,10 +20,11 @@ class Question {
           + ' title varchar(100),'
           + ' body varchar(3000),'
           + ' tags varchar(255) NULL,'
+          + ' answered boolean DEFAULT false,'
           + ' answer_count integer DEFAULT 0,'
           + ' view_count integer DEFAULT 0,'
-          + ' created_at date DEFAULT CURRENT_TIMESTAMP,'
-          + ' updated_at date DEFAULT CURRENT_TIMESTAMP );';
+          + ' created_at timestamp DEFAULT CURRENT_TIMESTAMP,'
+          + ' updated_at timestamp DEFAULT CURRENT_TIMESTAMP );';
 
     pool.connect((error, client, done) => {
       if (error) return callback({ status: false, message: error.stack });
@@ -37,11 +38,11 @@ class Question {
 
   static find(id, callback) {
     let getQuery = {
-      text: 'SELECT * FROM questions WHERE id = $1',
+      text: 'SELECT questions.*, users.name AS username FROM questions LEFT JOIN users ON users.id = questions.user_id WHERE questions.id = $1 ',
       values: [`${id}`],
     };
 
-    if (!id) getQuery = 'SELECT * FROM questions ORDER BY id DESC LIMIT 1';
+    if (!id) getQuery = 'SELECT questions.*, users.name AS username FROM questions LEFT JOIN users ON users.id = questions.user_id ORDER BY id DESC LIMIT 1';
 
     pool.connect((error, client, done) => {
       if (error) return callback({ status: false, message: error.stack });
@@ -78,13 +79,21 @@ class Question {
       values.push(aQuestion.title);
     }
     if (aQuestion.body) {
-      set += `body = $${i += 1} `;
+      set += `${set === '' ? '' : ','} body = $${i += 1} `;
       values.push(aQuestion.body);
     }
     if (aQuestion.tags) {
-      set += `tags = $${i += 1} `;
+      set += `${set === '' ? '' : ','} tags = $${i += 1} `;
       values.push(aQuestion.tags);
     }
+    if (aQuestion.view_count) {
+      set += `${set === '' ? '' : ','} view_count = view_count + 1 `;
+    }
+    if (aQuestion.answer_count) {
+      set += `${set === '' ? '' : ','} ${aQuestion.answer_count === 1 ? 'answer_count = answer_count + 1 ' : 'answer_count = answer_count - 1 '}`;
+    }
+    set += `${set === '' ? '' : ','} answered = $${i += 1} `;
+    values.push(aQuestion.answered || false);
     values.push(id);
 
     const updateQuery = {
@@ -103,7 +112,7 @@ class Question {
   }
 
   static findAll(callback) {
-    const getQuery = 'SELECT * FROM questions ORDER BY created_at';
+    const getQuery = 'SELECT questions.*, users.name AS username FROM questions LEFT JOIN users ON users.id = questions.user_id ORDER BY questions.created_at DESC';
 
     pool.connect((error, client, done) => {
       if (error) return callback({ status: false, message: error.stack });
@@ -115,11 +124,28 @@ class Question {
     });
   }
 
-  static findForUser(id, callback) {
+  static findForUser(id, sort, callback) {
+    const orderBy = sort === 'top' ? ' ORDER BY answer_count DESC ' : ' ORDER BY created_at DESC ';
     const getQuery = {
-      text: 'SELECT * FROM questions WHERE user_id = $1',
+      text: `SELECT * FROM questions WHERE user_id = $1 ${orderBy}`,
       values: [`${id}`],
     };
+
+    pool.connect((error, client, done) => {
+      if (error) return callback({ status: false, message: error.stack });
+      return client.query(getQuery, (err, res) => {
+        done();
+        if (err) return callback({ status: false, messages: err.stack });
+        return callback({ status: true, questions: res.rows });
+      });
+    });
+  }
+
+  static search(text, callback) {
+    const getQuery = {
+      text: `SELECT questions.*, users.name AS username FROM questions LEFT JOIN users ON users.id = questions.user_id WHERE LOWER(questions.title) LIKE LOWER($1) ORDER BY questions.created_at DESC`,
+      values: [`%${text}%`],
+    }
 
     pool.connect((error, client, done) => {
       if (error) return callback({ status: false, message: error.stack });

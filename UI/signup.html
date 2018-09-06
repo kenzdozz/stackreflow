@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Page Title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" media="screen" href="./css/main.css" />
+    <link rel="stylesheet" type="text/css" media="screen" href="./css/font-awesome.min.css" />
+    <!-- <script src="main.js"></script> -->
+</head>
+
+<body>
+    <div class="container">
+        <div class="auth-wrapper">
+            <div>
+                <a href="index.html">
+                    <img src="./stack.png" class="logo">
+                </a>
+            </div>
+            <h2>Sign up</h2>
+            <form id="login" method="POST" action="">
+                <input type="text" name="name" class="control" placeholder="Display name" required>
+                <p class="input-error name"></p>
+                <input type="email" name="email" class="control" placeholder="Email">
+                <p class="input-error email"></p>
+                <input type="password" name="password" class="control" placeholder="Password" required>
+                <p class="input-error password"></p>
+                <button type="submit" class="btn auth">Sign up </button>
+            </form>
+            <p>Already have a account?
+                <a href="login.html">Login</a>
+            </p>
+        </div>
+    </div>
+
+    <script src="./js/functions.js"></script>
+    <script>
+        document.querySelector('form').onsubmit = function (event) {
+            event.preventDefault();
+            const form = this;
+            const user = {
+                name: form.querySelector('input[name=name]').value,
+                email: form.querySelector('input[name=email]').value,
+                password: form.querySelector('input[name=password]').value,
+            }
+            const loader = document.createElement('i');
+            loader.setAttribute('class', 'fa fa-spinner fa-spin');
+            const loginBtn = form.querySelector('button');
+            if (loginBtn.childNodes.length === 1) loginBtn.appendChild(loader);
+            form.querySelectorAll('.input-error').forEach(input => input.innerHTML = '');
+
+            const url = `${BaseUrl}/api/v1/auth/signup`;
+            fetchCall(url, 'POST', user, (err, response) => {
+                if (err) return loginBtn.removeChild(loader);
+                if (!response.status) {
+                    for (var key in response.errors) {
+                        document.querySelector('.input-error.' + key).innerHTML = response.errors[key];
+                    }
+                    return loginBtn.removeChild(loader);
+                }
+                const success = document.createElement('p');
+                success.setAttribute('class', 'alert success');
+                success.innerHTML = 'Registration successfull! Redirecting to login page. ';
+                success.appendChild(loader);
+                form.prepend(success);
+                setTimeout(() => {
+                    location.href = 'login.html';
+                }, 2000);
+            });
+        }
+    </script>
+</body>
+
+</html>
