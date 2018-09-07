@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/kenzdozz/stackreflow.svg?branch=master)](https://travis-ci.org/kenzdozz/stackreflow) [![Coverage Status](https://coveralls.io/repos/github/kenzdozz/stackreflow/badge.svg?branch=develop)](https://coveralls.io/github/kenzdozz/stackreflow?branch=develop)
+[![Build Status](https://travis-ci.org/kenzdozz/stackreflow.svg?branch=master)](https://travis-ci.org/kenzdozz/stackreflow) [![Coverage Status](https://coveralls.io/repos/github/kenzdozz/stackreflow/badge.svg?branch=develop)](https://coveralls.io/github/kenzdozz/stackreflow?branch=develop) [![Maintainability](https://api.codeclimate.com/v1/badges/3108d1b13f81a17a521d/maintainability)](https://codeclimate.com/github/kenzdozz/stackreflow/maintainability)
 
 # Stackreflow
 
@@ -41,6 +41,7 @@ Then clone the repository or download and uncompress:
 Start the App by running:
 
 `npm install`
+
 `npm start`
 
 ## Acknoledgement
