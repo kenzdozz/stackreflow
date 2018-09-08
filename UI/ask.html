@@ -8,12 +8,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" type="text/css" media="screen" href="./css/main.css" />
     <link rel="stylesheet" type="text/css" media="screen" href="./css/font-awesome.min.css" />
+    <link rel="shortcut icon" href="./favicon.ico" type="image/x-icon">
     <script>
         if(!localStorage.getItem('userId')){
             location.href = 'login.html';
         }
     </script>
-    <!-- <script src="main.js"></script> -->
 </head>
 
 <body>
@@ -44,6 +44,7 @@
                         <li><a href="users.html">Users</a></li>
                     </ul>
                     <p>Stackoverflow lite. For Andela challenge</p>
+                    <a href="./docs.html">View Docs</a>
                     <p>&copy; 2018 <a href="https://github.com/kenzdozz">KENZiE</a></p>
                 </div>
             <div class="content">
@@ -72,40 +73,7 @@
     </footer>
 
     <script src="./js/functions.js"></script>
-    <script>
-        handleBtn();
-        document.querySelector('#askQuestion').onsubmit = function (event) {
-            event.preventDefault();
-            const form = this;
-            const question = {
-                title: form.querySelector('input[name=title]').value,
-                body: form.querySelector('textarea[name=body]').value,
-                tags: form.querySelector('input[name=tags]').value,
-            }
-            const loader = document.createElement('i');
-            loader.setAttribute('class', 'fa fa-spinner fa-spin');
-            const submitBtn = form.querySelector('button');
-            if (submitBtn.childNodes.length === 1) submitBtn.appendChild(loader);
-            form.querySelectorAll('.input-error').forEach(input => input.innerHTML = '');
-
-            const url = `${BaseUrl}/api/v1/questions`;
-            fetchCall(url, 'POST', question, (error, response) => {
-                console.log(response);
-                if (error) return submitBtn.removeChild(loader);
-                if (!response.status) {
-                    if (response.errors === 'Unauthorized Access - invalid or no token'){
-                        return location.href = 'login.html';
-                    }
-                    for (var key in response.errors) {
-                        document.querySelector('.input-error.' + key).innerHTML = response.errors[key];
-                    }
-                    return submitBtn.removeChild(loader);
-                }
-                location.href = 'question.html?id=' + response.question.id;
-                submitBtn.removeChild(loader);
-            })
-        }
-    </script>
+    <script src="./js/ask.js"></script>
 
 </body>
 

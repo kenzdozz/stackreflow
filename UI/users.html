@@ -8,7 +8,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" type="text/css" media="screen" href="./css/main.css" />
     <link rel="stylesheet" type="text/css" media="screen" href="./css/font-awesome.min.css" />
-    <!-- <script src="main.js"></script> -->
+    <link rel="shortcut icon" href="./favicon.ico" type="image/x-icon">
 </head>
 
 <body>
@@ -39,6 +39,7 @@
                     <li><a href="users.html">Users</a></li>
                 </ul>
                 <p>Stackoverflow lite. For Andela challenge</p>
+                <a href="./docs.html">View Docs</a>
                 <p>&copy; 2018 <a href="https://github.com/kenzdozz">KENZiE</a></p>
             </div>
             <div class="content">
@@ -67,50 +68,8 @@
     </footer>
 
     <script src="./js/functions.js"></script>
-    <script>
-        let manageQ = null;
-        window.onload = () => {
-            let loader = '<div class="loader"><i class="fa fa-spinner fa-spin"></i></div>';
-
-            const usersDiv = document.querySelector('.users');
-            usersDiv.innerHTML = loader;
-            const url = `${BaseUrl}/api/v1/users`;
-
-            fetchCall(url, 'GET', null, (error, response) => {
-                if (error) {
-                    usersDiv.innerHTML = '<h2>An error has been encountered.</h2>';
-                    console.log(error);
-                    return handleBtn(false);
-                }
-
-                handleBtn(response.authCheck);
-                if (!response.status) {
-                    usersDiv.innerHTML = '<h2>User Not Found</h2>';
-                    return;
-                }
-                const users = response.users;
-
-                let userDiv = '';
-                users.forEach(user => {
-                    
-                userDiv += `<div id="u${user.id}" class="user">
-                        <a href="user.html?id=${user.id}">${user.name}</a>
-                        <p>Contributions</p>
-                        <div>
-                            <span>Q:</span>
-                            <h3>${user.question_count}</h3>
-                        </div>
-                        <div>
-                            <span>A:</span>
-                            <h3>${user.answer_count}</h3>
-                        </div>
-                    </div>`;
-                });
-                usersDiv.innerHTML = userDiv;
-            });
-        }
-
-    </script>
+    <script src="./js/users.js"></script>
+    
 </body>
 
 </html>

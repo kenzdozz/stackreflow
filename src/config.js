@@ -4,10 +4,10 @@ const prodDb = {
   ssl: true,
 };
 const devDb = {
-  user: 'postgres',
+  user: 'kenzdozz',
   host: 'localhost',
   database: 'stackreflow',
-  password: '',
+  password: 'chidozie',
   port: 5432,
 };
 const dbConnObj = process.env.NODE_ENV ? prodDb : devDb;

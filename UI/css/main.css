@@ -249,7 +249,7 @@ input {
     .sidebar-right.show, .search-form.show{
         display: block !important;
     }
-    .nav.hide{
+    .nav.hide, .logo-div.hide{
         display: none !important;
     }
     .search-form{

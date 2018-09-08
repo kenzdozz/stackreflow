@@ -8,7 +8,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" type="text/css" media="screen" href="./css/main.css" />
     <link rel="stylesheet" type="text/css" media="screen" href="./css/font-awesome.min.css" />
-    <!-- <script src="main.js"></script> -->
+    <link rel="shortcut icon" href="./favicon.ico" type="image/x-icon">
 </head>
 
 <body>
@@ -39,6 +39,7 @@
                     <li><a href="users.html">Users</a></li>
                 </ul>
                 <p>Stackoverflow lite. For Andela challenge</p>
+                <a href="./docs.html">View Docs</a>
                 <p>&copy; 2018 <a href="https://github.com/kenzdozz">KENZiE</a></p>
             </div>
             <div class="content">
@@ -46,63 +47,6 @@
                 <h1 class="mt0">Questions</h1>
                 <div class="questions">
                     <!-- <div id="q1" class="question">
-                        <div class="votes">
-                            <span class="mini-count">0</span>
-                            <span> views</span>
-                        </div>
-                        <div class="answers">
-                            <span class="mini-count">0</span>
-                            <span> answers</span>
-                        </div>
-                        <div class="summary">
-                            <h4>How can I write CSS without selectorswrite CSS without selectorswrite CSS without selectorswrite
-                                CSS without selectors?</h4>
-                            <div class="tags">android</div>
-                            <div class="authored">
-                                <span class="time">21 mins ago </span>
-                                <a class="author" href="#">KenzDozz</a>
-                            </div>
-                        </div>
-                    </div> -->
-                    <!-- <div id="q1" class="question">
-                        <div class="votes">
-                            <span class="mini-count">0</span>
-                            <span> views</span>
-                        </div>
-                        <div class="answers">
-                            <span class="mini-count">0</span>
-                            <span> answers</span>
-                        </div>
-                        <div class="summary">
-                            <h4>How can I write CSS without selectorswrite CSS without selectorswrite CSS without selectorswrite
-                                CSS without selectors?</h4>
-                            <div class="tags">android</div>
-                            <div class="authored">
-                                <span class="time">21 mins ago </span>
-                                <a class="author" href="#">KenzDozz</a>
-                            </div>
-                        </div>
-                    </div>
-                    <div id="q1" class="question">
-                        <div class="votes">
-                            <span class="mini-count">0</span>
-                            <span> views</span>
-                        </div>
-                        <div class="answers">
-                            <span class="mini-count">0</span>
-                            <span> answers</span>
-                        </div>
-                        <div class="summary">
-                            <h4>How can I write CSS without selectorswrite CSS without selectorswrite CSS without selectorswrite
-                                CSS without selectors?</h4>
-                            <div class="tags">android</div>
-                            <div class="authored">
-                                <span class="time">21 mins ago </span>
-                                <a class="author" href="#">KenzDozz</a>
-                            </div>
-                        </div>
-                    </div>
-                    <div id="q1" class="question">
                         <div class="votes">
                             <span class="mini-count">0</span>
                             <span> views</span>
@@ -132,48 +76,7 @@
     </footer>
 
     <script src="./js/functions.js"></script>
-    <script>
-        window.onload = () => {
-            let loader = '<div class="loader"><i class="fa fa-spinner fa-spin"></i></div>';
-
-            const questionsDiv = document.querySelector('.questions');
-            questionsDiv.innerHTML = loader;
-
-            const url = `${BaseUrl}/api/v1/questions`;
-            fetchCall(url, 'GET', null, (err, response) => {
-                if (err) return handleBtn(false);handleBtn(response.authCheck);
-                if (!response.status) {
-                    return;
-                }
-                let questions = '';
-                if (!response.questions.length){
-                    return questionsDiv.innerHTML = '<h2>Be the first to ask a question.</h2>';
-                }
-                response.questions.forEach(question => {
-                    questions += `
-                        <div id="q${question.id}" class="question">
-                        <div class="votes">
-                            <span class="mini-count">${question.view_count}</span>
-                            <span> views</span>
-                        </div>
-                        <div class="answers">
-                            <span class="mini-count">${question.answer_count}</span>
-                            <span> answers</span>
-                        </div>`;
-                    questions += `<div class="summary">
-                            <h4><a href="question.html?id=${question.id}">${question.title}</a></h4>
-                            <div class="tags">${question.tags != 'undefined' ? question.tags : ''}</div>
-                            <div class="authored">
-                                <span class="time">${question.created} </span> 
-                                <a class="author" href="user.html?id=${question.user_id}">${question.username}</a>
-                            </div>
-                        </div>
-                    </div>`;
-                });
-                questionsDiv.innerHTML = questions;
-            });
-        }
-    </script>
+    <script src="./js/index.js"></script>
 
 </body>
 
