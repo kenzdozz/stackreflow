@@ -1,5 +1,5 @@
 FORMAT: 1A
-HOST: https://stackreflow.herokuapp.com
+HOST: https://stackreflow.herokuapp.com/api/v1
 
 # Stackreflow
 
@@ -91,8 +91,8 @@ You may search for questions by pass a query 'search' string parameter.
                     answered: false,
                     answer_count: 2,
                     view_count: 4,
-                    created_at: 2018-09-01T12:37:05.510Z,
-                    updated_at: 2018-09-01T12:37:05.510Z,
+                    created_at: "2018-09-01T12:37:05.510Z",
+                    updated_at: "2018-09-01T12:37:05.510Z",
                     created: '2 hours ago',
                     manage: false,
                 },
@@ -128,8 +128,8 @@ Token REQUIRED.
                         answered: false,
                         answer_count: 2,
                         view_count: 4,
-                        created_at: 2018-09-01T12:37:05.510Z,
-                        updated_at: 2018-09-01T12:37:05.510Z,
+                        created_at: "2018-09-01T12:37:05.510Z",
+                        updated_at: "2018-09-01T12:37:05.510Z",
                         created: "1 second ago",
                         manage: false,
                     }
@@ -160,8 +160,8 @@ You can get a question by passing the questionId parameter while calling this ac
                     answered: false,
                     answer_count: 2,
                     view_count: 4,
-                    created_at: 2018-09-01T12:37:05.510Z,
-                    updated_at: 2018-09-01T12:37:05.510Z,
+                    created_at: "2018-09-01T12:37:05.510Z",
+                    updated_at: "2018-09-01T12:37:05.510Z",
                     created: "1 second ago",
                     manage: false,
                 },
@@ -174,8 +174,8 @@ You can get a question by passing the questionId parameter while calling this ac
                     username: "Kenneth",
                     vote_count: 4,
                     accepted: false
-                    created_at: 2018-09-01T12:37:05.510Z,
-                    updated_at: 2018-09-01T12:37:05.510Z,
+                    created_at: "2018-09-01T12:37:05.510Z",
+                    updated_at: "2018-09-01T12:37:05.510Z",
                 },
             ]
         }
@@ -228,8 +228,8 @@ Token REQUIRED.
                     username: "Kenneth",
                     vote_count: 4,
                     accepted: false
-                    created_at: 2018-09-01T12:37:05.510Z,
-                    updated_at: 2018-09-01T12:37:05.510Z,
+                    created_at: "2018-09-01T12:37:05.510Z",
+                    updated_at: "2018-09-01T12:37:05.510Z",
                 },
         }
 
@@ -291,8 +291,8 @@ Token REQUIRED.
                 user_id: 2,
                 answer_id: 1,
                 vote: 1,
-                created_at: 2018-09-01T12:37:05.510Z,
-                updated_at: 2018-09-01T12:37:05.510Z,
+                created_at: "2018-09-01T12:37:05.510Z",
+                updated_at: "2018-09-01T12:37:05.510Z",
             },
 
 ## Vote - downvote [/questions/{questionId}/answers/{answerId}/downvote]
@@ -316,8 +316,8 @@ Token REQUIRED.
                 user_id: 2,
                 answer_id: 1,
                 vote: -1,
-                created_at: 2018-09-01T12:37:05.510Z,
-                updated_at: 2018-09-01T12:37:05.510Z,
+                created_at: "2018-09-01T12:37:05.510Z",
+                updated_at: "2018-09-01T12:37:05.510Z",
             },
         }
 
@@ -339,8 +339,8 @@ You can get all registered users by calling this action.
                     email: 'KenzDozz@gmail.com',
                     question_count: 7,
                     answer_count: 22,
-                    created_at: 2018-09-01T12:37:05.510Z,
-                    updated_at: 2018-09-01T12:37:05.510Z,
+                    created_at: "2018-09-01T12:37:05.510Z",
+                    updated_at: "2018-09-01T12:37:05.510Z",
                 },
         }
 
@@ -365,8 +365,8 @@ You may pass a query string 'top' to sort questions by most responded to, or pas
                         email: 'KenzDozz@gmail.com',
                         question_count: 7,
                         answer_count: 22,
-                        created_at: 2018-09-01T12:37:05.510Z,
-                        updated_at: 2018-09-01T12:37:05.510Z,
+                        created_at: "2018-09-01T12:37:05.510Z",
+                        updated_at: "2018-09-01T12:37:05.510Z",
                     },
             questions: [
                 {
@@ -379,45 +379,11 @@ You may pass a query string 'top' to sort questions by most responded to, or pas
                     answered: false,
                     answer_count: 2,
                     view_count: 4,
-                    created_at: 2018-09-01T12:37:05.510Z,
-                    updated_at: 2018-09-01T12:37:05.510Z,
+                    created_at: "2018-09-01T12:37:05.510Z",
+                    updated_at: "2018-09-01T12:37:05.510Z",
                     created: '2 hours ago',
                     manage: false,
                 },
             ]
         }
 
-
-<!-- 
-# Data Structures
-
-## Question (object)
-    - id: `1` (number) - The id of the question.
-    - title: `How can I write API documentation?` (string) - The title of the question.
-    - body: `How can I write proper documentation with API Blueprint` (string) - The description of the question.
-    - tags: `api, documentation` (string) - Tags associated with the question.
-    - user_id: `1` (number) - The ID of the question author.
-    - username: `KENZiE` (string) - The name of the author.
-    - answered: `false` (boolean) - Indicates if an answer has been accepted for the question.
-    - answer_count: `2` (number) - The count of answers given.
-    - view_count: `4` (number) - The count of views of the question.
-    - created_at: `2018-09-01T12:37:05.510Z` (timestamp) - The time of question creation.
-    - updated_at: `2018-09-01T12:37:05.510Z` (timestamp) - The time question was last updated.
-    - created: `2 hours ago` (string) - Time ago of question creation.
-    - manage: `false` (boolean) - Indicates if viewer authored the question.
-    
-    {
-        id: 1,
-        title: 'How can I write API documentation?',
-        body: 'How can I write proper documentation with API Blueprint',
-        tags: 'api, documentation',
-        user_id: 1,
-        username: 'KENZiE',
-        answered: false,
-        answer_count: 2,
-        view_count: 4,
-        created_at: 2018-09-01T12:37:05.510Z,
-        updated_at: 2018-09-01T12:37:05.510Z,
-        created: '2 hours ago',
-        manage: false,
-    } -->

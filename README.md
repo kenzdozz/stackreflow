@@ -23,8 +23,9 @@ And view profile to see summary of activities on the platform.
 ## Deployment
 * This app is deployed on Heroku ::: https://stackreflow.herokuapp.com/v1/api
 * This app UI consuming the API is on [Heroku - StackReflow](https://stackreflow.herokuapp.com)
-* Documentation for the API is on [StackReflow Docs](https://stackreflow.herokuapp.com)
+* Documentation for the API is on [StackReflow Docs](https://stackreflow.herokuapp.com/api/docs)
 * Documentation on [Apiary.io](https://stackreflow.docs.apiary.io)
+* Pivotal Tracker on [Tracker - StackReflow](https://www.pivotaltracker.com/n/projects/2191751)
 
 ## Technology used
 [Node js](https://nodejs.org/en/)
